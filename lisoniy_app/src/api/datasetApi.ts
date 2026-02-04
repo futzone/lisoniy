@@ -179,5 +179,22 @@ export const datasetApi = {
             method: 'PUT',
             body: JSON.stringify(data)
         });
+    },
+
+    // Dataset Starring
+    async starDataset(datasetId: string): Promise<{ message: string }> {
+        return apiClient.request<{ message: string }>(`/api/v1/datasets/${datasetId}/star`, {
+            method: 'POST'
+        });
+    },
+
+    async unstarDataset(datasetId: string): Promise<{ message: string }> {
+        return apiClient.request<{ message: string }>(`/api/v1/datasets/${datasetId}/star`, {
+            method: 'DELETE'
+        });
+    },
+
+    async isStarred(datasetId: string): Promise<{ is_starred: boolean }> {
+        return apiClient.get<{ is_starred: boolean }>(`/api/v1/datasets/${datasetId}/starred`);
     }
 };

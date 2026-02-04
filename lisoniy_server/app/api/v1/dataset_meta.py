@@ -125,10 +125,8 @@ async def update_dataset_meta(
             detail="Dataset metadata not found"
         )
     
-    await db.commit()
-    
-    # Manually build response to avoid MissingGreenlet error
-    return DatasetMetaResponse(
+    # Build response BEFORE commit to avoid greenlet error
+    response = DatasetMetaResponse(
         dataset_id=meta.dataset_id,
         stars_count=meta.stars_count,
         downloads_count=meta.downloads_count,
@@ -142,6 +140,11 @@ async def update_dataset_meta(
         created_at=meta.created_at,
         updated_at=meta.updated_at
     )
+    
+    await db.commit()
+    
+    return response
+
 
 
 
@@ -264,6 +267,22 @@ async def unstar_dataset(
         )
     
     await db.commit()
+
+
+@router.get("/datasets/{dataset_id}/starred")
+async def check_if_starred(
+    dataset_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Check if the current user has starred a dataset
+    
+    Returns whether the current user has starred this dataset.
+    """
+    is_starred = await DatasetMetaService.is_starred_by(db, dataset_id, current_user.id)
+    
+    return {"is_starred": is_starred}
 
 
 @router.get("/datasets/{dataset_id}/stars", response_model=StarsListResponse)

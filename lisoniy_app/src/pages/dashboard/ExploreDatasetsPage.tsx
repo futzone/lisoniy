@@ -16,7 +16,6 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
-  Trash2,
   Edit,
   Globe,
   Lock
@@ -24,16 +23,7 @@ import {
 import { motion } from "motion/react";
 import { datasetApi, DatasetResponse, DatasetListResponse } from "@/api/datasetApi";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/app/components/ui/alert-dialog";
+
 
 const ITEMS_PER_PAGE = 10;
 
@@ -44,9 +34,6 @@ export function ExploreDatasetsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [datasetToDelete, setDatasetToDelete] = useState<DatasetResponse | null>(null);
-  const [deleting, setDeleting] = useState(false);
 
   const fetchDatasets = useCallback(async (query?: string, page = 0) => {
     try {
@@ -95,33 +82,6 @@ export function ExploreDatasetsPage() {
     const newOffset = newPage * ITEMS_PER_PAGE;
     setOffset(newOffset);
     fetchDatasets(searchQuery, newPage);
-  };
-
-  const handleDeleteClick = (e: React.MouseEvent, dataset: DatasetResponse) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDatasetToDelete(dataset);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!datasetToDelete) return;
-
-    try {
-      setDeleting(true);
-      await datasetApi.deleteDataset(datasetToDelete.id);
-      toast.success(`"${datasetToDelete.name}" o'chirildi`);
-
-      // Refresh the list
-      fetchDatasets(searchQuery, Math.floor(offset / ITEMS_PER_PAGE));
-    } catch (error) {
-      console.error("Failed to delete dataset:", error);
-      toast.error("Datasetni o'chirishda xatolik yuz berdi");
-    } finally {
-      setDeleting(false);
-      setDeleteDialogOpen(false);
-      setDatasetToDelete(null);
-    }
   };
 
   const formatTimeAgo = (dateString: string) => {
@@ -208,7 +168,7 @@ export function ExploreDatasetsPage() {
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
                   <Link to={`/dashboard/dataset/${dataset.id}`}>
-                    <Card className="border-2 hover:shadow-lg transition-all cursor-pointer">
+                    <Card className="border-2 hover:shadow-lg transition-all cursor-pointer h-full flex flex-col">
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -225,7 +185,7 @@ export function ExploreDatasetsPage() {
                           <Badge variant="secondary">{dataset.type}</Badge>
                         </div>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="flex-1 flex flex-col justify-between">
                         <div className="flex items-center justify-between text-sm text-muted-foreground">
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1">
@@ -255,18 +215,10 @@ export function ExploreDatasetsPage() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              // Navigate to edit
+                              window.location.href = `/dashboard/dataset/${dataset.id}/edit`;
                             }}
                           >
                             <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                            onClick={(e) => handleDeleteClick(e, dataset)}
-                          >
-                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </CardContent>
@@ -332,33 +284,6 @@ export function ExploreDatasetsPage() {
         )}
       </div>
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Datasetni o'chirish</AlertDialogTitle>
-            <AlertDialogDescription>
-              "{datasetToDelete?.name}" datasetini o'chirmoqchimisiz?
-              Bu amalni ortga qaytarib bo'lmaydi va barcha ma'lumotlar o'chiriladi.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Bekor qilish</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteConfirm}
-              disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleting ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : (
-                <Trash2 className="h-4 w-4 mr-2" />
-              )}
-              O'chirish
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </AppLayout>
   );
 }

@@ -85,6 +85,22 @@ class DatasetMetaService:
         await db.flush()
         return meta
 
+    async def increment_view_count(db: AsyncSession, dataset_id: UUID) -> None:
+        """
+        Increment review count for a dataset
+        
+        Args:
+            db: Database session
+            dataset_id: UUID of the dataset
+        """
+        # Update views_count
+        await db.execute(
+            update(DatasetMeta)
+            .where(DatasetMeta.dataset_id == dataset_id)
+            .values(views_count=DatasetMeta.views_count + 1)
+        )
+        await db.flush()
+
     
     @staticmethod
     async def star_dataset(db: AsyncSession, dataset_id: UUID, user_id: int) -> Optional[DatasetStar]:

@@ -23,6 +23,8 @@ import { ExploreDatasetsPage } from "@/pages/dashboard/ExploreDatasetsPage";
 import { MyContributionsPage } from "@/pages/dashboard/MyContributionsPage";
 import { DatasetDetailPage } from "@/pages/dashboard/DatasetDetailPage";
 import { CreateDatasetPage } from "@/pages/dashboard/CreateDatasetPage";
+import { EditDatasetPage } from "@/pages/dashboard/EditDatasetPage";
+import { QuickAddEntryPage } from "@/pages/dashboard/QuickAddEntryPage";
 import { AllDiscussionsPage } from "@/pages/dashboard/AllDiscussionsPage";
 import { AllArticlesPage } from "@/pages/dashboard/AllArticlesPage";
 import { AllDatasetsPage } from "@/pages/dashboard/AllDatasetsPage";
@@ -73,6 +75,8 @@ export default function App() {
             <Route path="/dashboard/contributions/articles" element={<AllArticlesPage />} />
             <Route path="/dashboard/contributions/datasets" element={<AllDatasetsPage />} />
             <Route path="/dashboard/dataset/:datasetId" element={<DatasetDetailPage />} />
+            <Route path="/dashboard/dataset/:datasetId/edit" element={<EditDatasetPage />} />
+            <Route path="/dashboard/dataset/:datasetId/add" element={<QuickAddEntryPage />} />
             <Route path="/dashboard/create-dataset" element={<CreateDatasetPage />} />
             <Route path="/dashboard/settings" element={<SettingsPage />} />
             <Route path="/dashboard/profile" element={<ProfilePage />} />

@@ -48,18 +48,19 @@ class DatasetMeta(Base):
         comment="User who last updated the dataset"
     )
     
-    # Timestamps
+    # Timestamps - use Python defaults to avoid async issues
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        server_default=func.now()
+        default=datetime.utcnow
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        server_default=func.now(),
-        onupdate=func.now()
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
     )
+
     
     # Relationships
     dataset: Mapped[Optional["Dataset"]] = relationship(
