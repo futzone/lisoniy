@@ -251,11 +251,23 @@ export function DatasetDetailPage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => datasetApi.downloadDataset(datasetId as string, 'json')} className="gap-2 cursor-pointer">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      datasetApi.downloadDataset(datasetId as string, 'json');
+                      if (meta) setMeta({ ...meta, downloads_count: (meta.downloads_count || 0) + 1 });
+                    }}
+                    className="gap-2 cursor-pointer"
+                  >
                     <FileJson className="h-4 w-4 text-blue-500" />
                     JSON formatda
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => datasetApi.downloadDataset(datasetId as string, 'csv')} className="gap-2 cursor-pointer">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      datasetApi.downloadDataset(datasetId as string, 'csv');
+                      if (meta) setMeta({ ...meta, downloads_count: (meta.downloads_count || 0) + 1 });
+                    }}
+                    className="gap-2 cursor-pointer"
+                  >
                     <FileSpreadsheet className="h-4 w-4 text-green-500" />
                     CSV formatda
                   </DropdownMenuItem>

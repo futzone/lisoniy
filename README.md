@@ -1,10 +1,65 @@
-# Lisoniy - AI Ma'lumotlar To'plami Platformasi
+# 📜 Lisoniy — O‘zbek Tili uchun Universal Raqamli Ekotizim
 
-Lisoniy — bu sun'iy intellekt (AI) modellarini o'qitish uchun turli xildagi ma'lumotlar to'plamlarini (dataset) yaratish, boshqarish va ommalashtirish uchun mo'ljallangan zamonaviy platforma.
+**Lisoniy** — o‘zbek tilini sun’iy intellekt va zamonaviy texnologiyalar olamiga integratsiya qilishni maqsad qilgan ochiq manbali (open-source) platforma. Biz o‘zbek tili uchun yuqori sifatli datasetlar, lingvistik vositalar va hamjamiyatni bir nuqtada birlashtiramiz.
 
-## 🚀 Loyiha Haqida
+---
 
-Ushbu loyiha tadqiqotchilar, dasturchilar va ma'lumotlar muhandislariga sifatli AI ma'lumotlar to'plamlarini hamkorlikda yaratish imkonini beradi. Platforma o'zbek tili va boshqa tillar uchun korpuslar, buyruq-javob juftliklari (instructions) va NER (Named Entity Recognition) kabi murakkab ma'lumotlar tuzilmalarini qo'llab-quvvatlaydi.
+## 🎯 Loyihaning Maqsadi
+
+Lisoniyning asosiy maqsadi — o‘zbek tilining raqamli merosini yaratish va boyitishdir. Biz tilimizni shunchaki muloqot vositasi emas, balki sun’iy intellekt tillarida "gaplasha oladigan" va texnologik jarayonlarni boshqara oladigan darajaga olib chiqishni niyat qilganmiz.
+
+---
+
+## 🚀 Vazifalarimiz
+
+Loyihamiz oldiga qo‘yilgan asosiy strategik vazifalar:
+
+### 1. Sifatli Datasetlar Omborini Yaratish
+
+LLM (Large Language Models) modellarini o‘qitish uchun zarur bo‘lgan ma’lumotlar to‘plamini shakllantirish:
+
+* **Instruction Tuning:** Yo‘riqnomalarni tushunuvchi modellar uchun o‘zbekcha buyruqlar to‘plami.
+* **Parallel Korpus:** Mashina tarjimasi uchun o‘zbek-ingliz/rus tillaridagi mos matnlar.
+* **NER & NLP Data:** Atoqli otlarni aniqlash va boshqa lingvistik tahlillar uchun belgilangan (tagged) ma’lumotlar.
+
+### 2. Lingvistik Utilitalarni Rivojlantirish
+
+Dasturchilar va tadqiqotchilar uchun tayyor vositalar taqdim etish:
+
+* **Morfologik analizator:** So‘zlarni o‘zak va qo‘shimchalarga avtomatik ajratish.
+* **Transliteratsiya:** Lotin va kirill alifbolari o‘rtasida xatosiz o‘tkazish.
+* **Imlo tekshirgich:** Aqlli algoritmlar yordamida matn xatolarini tuzatish.
+
+### 3. Bilimlar Markazi va Forum
+
+Tilshunoslar va AI muhandislari o‘rtasida ko‘prik o‘rnatish:
+
+* O‘zbek tili morfologiyasi va sintaksisiga oid raqamli darsliklar yaratish.
+* Hamjamiyat uchun ilmiy maqolalar va muhokamalar maydonini taqdim etish.
+
+### 4. Ochiq Ma'lumotlar (Open Data) Madaniyati
+
+Barcha yig‘ilgan datasetlarni ochiq manba ko‘rinishida taqdim etish orqali milliy startaplar va ilmiy tadqiqotlar uchun poydevor yaratish.
+
+---
+
+## 💎 Darajalar va Rag'bat
+
+Lisoniy — bu jamoaviy mehnat mahsuli. Shuning uchun bizda hissa qo‘shuvchilar (contributors) uchun maxsus reyting tizimi mavjud:
+
+* **Ishtirokchi** → **Tadqiqotchi** → **Ekspert** → **Bilimdon** → **Navoiyning izdoshi**.
+
+Har bir qo‘shilgan termin, tasdiqlangan tarjima yoki yozilgan maqola sizni millat tiliga xizmat qilishdek sharafli cho‘qqiga yaqinlashtiradi.
+
+---
+
+## 🤝 Bizga Qo'shiling!
+
+Millatimiz tili kelajagini birgalikda quramiz. Agar sizda datasetlar, lingvistik g‘oyalar yoki dasturlash ko‘nikmalari bo‘lsa, marhamat, loyihada ishtirok eting!
+
+> **O‘zbek tilini AI tili darajasiga birga olib chiqamiz!**
+
+---
 
 ## ✨ Asosiy Imkoniyatlar
 

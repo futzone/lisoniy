@@ -238,17 +238,24 @@ class DatasetMetaService:
     @staticmethod
     async def increment_downloads(db: AsyncSession, dataset_id: UUID) -> None:
         """
-        Increment download counter for a dataset
+        Increment download counter for a dataset (creates meta if missing)
         
         Args:
             db: Database session
             dataset_id: UUID of the dataset
         """
-        await db.execute(
+        # Try to update first
+        result = await db.execute(
             update(DatasetMeta)
             .where(DatasetMeta.dataset_id == dataset_id)
             .values(downloads_count=func.coalesce(DatasetMeta.downloads_count, 0) + 1)
         )
+        
+        # If no meta record found, create one
+        if result.rowcount == 0:
+            meta = DatasetMeta(dataset_id=dataset_id, downloads_count=1)
+            db.add(meta)
+            
         await db.flush()
     
     @staticmethod
