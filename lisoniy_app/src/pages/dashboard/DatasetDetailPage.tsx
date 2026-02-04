@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card";
@@ -51,10 +51,12 @@ export function DatasetDetailPage() {
   const [activeTab, setActiveTab] = useState("readme");
   const [isStarred, setIsStarred] = useState(false);
   const [starLoading, setStarLoading] = useState(false);
+  const viewIncremented = useRef(false);
 
-  // Fetch dataset data
+  // 1. Fetch main dataset data (runs only once per datasetId)
   useEffect(() => {
-    const fetchData = async () => {
+    let isMounted = true;
+    const fetchDatasetContent = async () => {
       if (!datasetId) return;
 
       setLoading(true);
@@ -63,45 +65,80 @@ export function DatasetDetailPage() {
       try {
         // Fetch dataset info
         const datasetData = await datasetApi.getDataset(datasetId);
+        if (!isMounted) return;
+
         setDataset(datasetData);
 
-        // Fetch metadata
-        try {
-          const metaData = await datasetApi.getDatasetMeta(datasetId);
-          setMeta(metaData);
-        } catch {
-          // Meta might not exist yet, that's ok
-          console.log("Meta not found, using defaults");
+        // Use meta from dataset response if available
+        if (datasetData.meta) {
+          setMeta(datasetData.meta);
+        } else {
+          // Fallback only if meta is missing for some reason
+          try {
+            const metaData = await datasetApi.getDatasetMeta(datasetId);
+            if (isMounted) setMeta(metaData);
+          } catch {
+            console.log("Meta not found, using defaults");
+          }
         }
 
         // Fetch first few entries
         try {
           const entriesData = await datasetApi.getDatasetEntries(datasetId, 0, 5);
-          setEntries(entriesData.entries);
+          if (isMounted) setEntries(entriesData.entries);
         } catch {
           console.log("Could not fetch entries");
         }
-        // Check if user has starred this dataset
-        const storedUser = localStorage.getItem('auth-storage');
-        const hasUser = user || (storedUser && JSON.parse(storedUser)?.state?.user);
-
-        if (hasUser) {
-          try {
-            const starredData = await datasetApi.isStarred(datasetId);
-            setIsStarred(starredData.is_starred);
-          } catch (starErr) {
-            console.error("Failed to fetch star status:", starErr);
-          }
-        }
       } catch (err: unknown) {
+        if (!isMounted) return;
         const errorMessage = err instanceof Error ? err.message : "Dataset topilmadi";
         setError(errorMessage);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
-    fetchData();
+    fetchDatasetContent();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [datasetId]);
+
+  // 2. Increment view count (Run once)
+  useEffect(() => {
+    if (!datasetId || viewIncremented.current) return;
+
+    viewIncremented.current = true;
+
+    const increment = async () => {
+      try {
+        await datasetApi.incrementView(datasetId);
+      } catch (err) {
+        console.error("Failed to increment views:", err);
+      }
+    };
+
+    increment();
+  }, [datasetId]);
+
+  // 3. Fetch user-specific data (stars) - depends on both id and user
+  useEffect(() => {
+    const fetchUserSpecificData = async () => {
+      if (!datasetId || !user) {
+        setIsStarred(false);
+        return;
+      }
+
+      try {
+        const starredData = await datasetApi.isStarred(datasetId);
+        setIsStarred(starredData.is_starred);
+      } catch (starErr) {
+        console.error("Failed to fetch star status:", starErr);
+      }
+    };
+
+    fetchUserSpecificData();
   }, [datasetId, user]);
 
   const handleToggleStar = async () => {

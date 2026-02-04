@@ -109,10 +109,12 @@ class DatasetService:
         )
         total = await db.scalar(count_query)
         
+        from sqlalchemy.orm import selectinload
+        
         # Get datasets
         query = select(Dataset).where(
             Dataset.creator_id == user_id
-        ).order_by(Dataset.created_at.desc()).offset(offset).limit(limit)
+        ).options(selectinload(Dataset.meta)).order_by(Dataset.created_at.desc()).offset(offset).limit(limit)
         
         result = await db.execute(query)
         datasets = result.scalars().all()
@@ -158,8 +160,10 @@ class DatasetService:
         count_query = select(func.count()).select_from(Dataset).where(*filters)
         total = await db.scalar(count_query)
         
+        from sqlalchemy.orm import selectinload
+
         # Base query with meta join for sorting
-        query = select(Dataset).where(*filters)
+        query = select(Dataset).where(*filters).options(selectinload(Dataset.meta))
         
         # Apply sorting
         if sort_by == "top":
@@ -331,8 +335,10 @@ class DatasetService:
             count_query = count_query.where(*filters)
         total = await db.scalar(count_query)
         
+        from sqlalchemy.orm import selectinload
+
         # Get datasets
-        query = select(Dataset)
+        query = select(Dataset).options(selectinload(Dataset.meta))
         if filters:
             query = query.where(*filters)
         query = query.order_by(Dataset.created_at.desc()).offset(offset).limit(limit)

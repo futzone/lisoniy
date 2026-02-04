@@ -244,6 +244,10 @@ export function ExploreDatasetsPage() {
                               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                               <span>{dataset.meta?.stars || 0}</span>
                             </div>
+                            <div className="flex items-center gap-1">
+                              <Eye className="h-4 w-4" />
+                              <span>{dataset.meta?.views_count || 0}</span>
+                            </div>
                           </div>
                           <span>{formatTimeAgo(dataset.updated_at)}</span>
                         </div>

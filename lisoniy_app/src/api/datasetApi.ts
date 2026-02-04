@@ -211,5 +211,11 @@ export const datasetApi = {
         link.click();
         link.remove();
         window.URL.revokeObjectURL(url);
+    },
+
+    async incrementView(datasetId: string): Promise<void> {
+        return apiClient.request<void>(`/api/v1/datasets/${datasetId}/views`, {
+            method: 'POST'
+        });
     }
 };

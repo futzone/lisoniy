@@ -176,20 +176,26 @@ async def get_dataset(
             detail="Dataset not found"
         )
     
-    # Increment view count
+    return DatasetResponse.model_validate(dataset)
+
+
+@router.post("/{dataset_id}/views", status_code=status.HTTP_204_NO_CONTENT)
+async def increment_views(
+    dataset_id: UUID,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Increment view count for a dataset
+    """
+    # Simply increment, no return needed
+    from app.services.dataset_meta_service import DatasetMetaService
     try:
-        from app.services.dataset_meta_service import DatasetMetaService
         await DatasetMetaService.increment_views(db, dataset_id)
         await db.commit()
-        
-        # Re-fetch to get updated view count and meta object if it was just created
-        dataset = await DatasetService.get_by_id(db, dataset_id, include_entry_count=True, include_meta=True)
     except Exception as e:
         import logging
         logging.error(f"Failed to increment views for dataset {dataset_id}: {e}")
-        # Don't fail the request if stats update fails
-    
-    return DatasetResponse.model_validate(dataset)
+        # Fail silently to not impact client
 
 
 @router.patch("/{dataset_id}", response_model=DatasetResponse)
