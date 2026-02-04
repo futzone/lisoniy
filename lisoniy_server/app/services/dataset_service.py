@@ -51,7 +51,8 @@ class DatasetService:
     async def get_by_id(
         db: AsyncSession,
         dataset_id: UUID,
-        include_entry_count: bool = True
+        include_entry_count: bool = True,
+        include_meta: bool = True
     ) -> Optional[Dataset]:
         """
         Get dataset by ID
@@ -60,11 +61,17 @@ class DatasetService:
             db: Database session
             dataset_id: Dataset ID
             include_entry_count: Whether to include entry count
+            include_meta: Whether to include metadata
             
         Returns:
             Dataset or None
         """
+        from sqlalchemy.orm import selectinload
         query = select(Dataset).where(Dataset.id == dataset_id)
+        
+        if include_meta:
+            query = query.options(selectinload(Dataset.meta))
+            
         result = await db.execute(query)
         dataset = result.scalar_one_or_none()
         
@@ -123,21 +130,25 @@ class DatasetService:
     async def get_public_datasets(
         db: AsyncSession,
         dataset_type: Optional[str] = None,
+        sort_by: str = "new",
         offset: int = 0,
         limit: int = 20
     ) -> tuple[list[Dataset], int]:
         """
-        Get public datasets
+        Get public datasets with sorting
         
         Args:
             db: Database session
             dataset_type: Filter by dataset type
+            sort_by: Sorting method (new, top, largest)
             offset: Pagination offset
             limit: Pagination limit
             
         Returns:
             Tuple of (datasets list, total count)
         """
+        from app.models.dataset_meta import DatasetMeta
+        
         # Build query
         filters = [Dataset.is_public == True]
         if dataset_type:
@@ -147,15 +158,41 @@ class DatasetService:
         count_query = select(func.count()).select_from(Dataset).where(*filters)
         total = await db.scalar(count_query)
         
-        # Get datasets
-        query = select(Dataset).where(*filters).order_by(
-            Dataset.created_at.desc()
-        ).offset(offset).limit(limit)
+        # Base query with meta join for sorting
+        query = select(Dataset).where(*filters)
+        
+        # Apply sorting
+        if sort_by == "top":
+            # Sort by stars and views
+            query = query.outerjoin(DatasetMeta, Dataset.id == DatasetMeta.dataset_id)
+            query = query.order_by(
+                func.coalesce(DatasetMeta.stars_count, 0).desc(),
+                func.coalesce(DatasetMeta.views_count, 0).desc(),
+                Dataset.created_at.desc()
+            )
+        elif sort_by == "largest":
+            # Sort by entry count (we already calculate this, but for order_by we might need a join or subquery)
+            # For simplicity, we'll use a subquery or join with entry counts if possible, 
+            # but usually entry_count is a business logic field. 
+            # In our case, we calculate it later. Let's do a join with func.count of DataEntry.
+            from app.models.dataset import DataEntry
+            query = (
+                select(Dataset)
+                .outerjoin(DataEntry, Dataset.id == DataEntry.dataset_id)
+                .where(*filters)
+                .group_by(Dataset.id)
+                .order_by(func.count(DataEntry.id).desc(), Dataset.created_at.desc())
+            )
+        else: # Default: new
+            query = query.order_by(Dataset.created_at.desc())
+            
+        # Apply pagination
+        query = query.offset(offset).limit(limit)
         
         result = await db.execute(query)
         datasets = result.scalars().all()
         
-        # Get entry counts for each dataset
+        # Get entry counts for each dataset (to populate the field)
         from app.models.dataset import DataEntry
         for dataset in datasets:
             count_query = select(func.count()).where(DataEntry.dataset_id == dataset.id)

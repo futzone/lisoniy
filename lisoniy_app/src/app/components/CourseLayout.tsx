@@ -91,13 +91,9 @@ export function CourseLayout({ courseTitle, themes, markdownContent, markdownFil
     e.preventDefault();
     const element = document.getElementById(id);
     if (element) {
-      const headerOffset = 100;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
       });
     }
   };
@@ -158,7 +154,7 @@ export function CourseLayout({ courseTitle, themes, markdownContent, markdownFil
             <span>Kurslarga qaytish</span>
           </Button>
         </div>
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-3 space-y-1">
             {themes.map((theme) => {
               const isActive = theme.slug === currentThemeSlug;
@@ -198,7 +194,7 @@ export function CourseLayout({ courseTitle, themes, markdownContent, markdownFil
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            <ScrollArea className="flex-1">
+            <ScrollArea className="flex-1 min-h-0">
               <div className="p-3 space-y-1">
                 {themes.map((theme) => {
                   const isActive = theme.slug === currentThemeSlug;

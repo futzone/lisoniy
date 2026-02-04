@@ -33,19 +33,23 @@ export function ExploreDatasetsPage() {
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState<"new" | "top" | "largest" | "mine">("new");
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  const fetchDatasets = useCallback(async (query?: string, page = 0) => {
+  const fetchDatasets = useCallback(async (query?: string, page = 0, filter = activeFilter) => {
     try {
       setLoading(true);
       let response: DatasetListResponse;
 
       if (query && query.trim()) {
         // Search mode
-        response = await datasetApi.searchDatasets(query, undefined, page * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
-      } else {
-        // Get user's datasets
+        response = await datasetApi.searchDatasets(query, undefined, page * ITEMS_PER_PAGE, ITEMS_PER_PAGE, filter === "mine" ? "new" : filter);
+      } else if (filter === "mine") {
+        // User's private/owned datasets
         response = await datasetApi.getMyDatasets(page * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
+      } else {
+        // Community/Public datasets with sorting
+        response = await datasetApi.getPublicDatasets(page * ITEMS_PER_PAGE, ITEMS_PER_PAGE, undefined, filter);
       }
 
       setDatasets(response.datasets);
@@ -56,11 +60,16 @@ export function ExploreDatasetsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [activeFilter]);
 
   useEffect(() => {
-    fetchDatasets();
-  }, [fetchDatasets]);
+    fetchDatasets(searchQuery, 0, activeFilter);
+  }, [activeFilter]);
+
+  const handleFilterChange = (filter: typeof activeFilter) => {
+    setActiveFilter(filter);
+    setOffset(0);
+  };
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -120,28 +129,63 @@ export function ExploreDatasetsPage() {
     <AppLayout pageTitle="Datasetlarni ko'rish">
       <div className="space-y-6">
         {/* Search and Filters */}
-        <Card className="border-2">
+        <Card className="border-2 shadow-sm">
           <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Datasetlarni qidirish..."
-                  className="pl-10"
-                  value={searchQuery}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                />
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Datasetlarni qidirish..."
+                    className="pl-10 h-11"
+                    value={searchQuery}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange(e.target.value)}
+                  />
+                </div>
+                <Link to="/dashboard/create-dataset">
+                  <Button className="h-11 px-6 gap-2">
+                    <Upload className="h-4 w-4" />
+                    Yangi dataset
+                  </Button>
+                </Link>
               </div>
-              <Button variant="outline" className="gap-2">
-                <Filter className="h-4 w-4" />
-                Filtr
-              </Button>
-              <Link to="/dashboard/create-dataset">
-                <Button className="gap-2">
-                  <Upload className="h-4 w-4" />
-                  Yangi dataset
+
+              {/* Advanced Filters */}
+              <div className="flex flex-wrap items-center gap-2 border-b pb-4">
+                <Button
+                  variant={activeFilter === "new" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleFilterChange("new")}
+                  className="rounded-full px-4"
+                >
+                  Yangi
                 </Button>
-              </Link>
+                <Button
+                  variant={activeFilter === "top" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleFilterChange("top")}
+                  className="rounded-full px-4"
+                >
+                  Top
+                </Button>
+                <Button
+                  variant={activeFilter === "largest" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleFilterChange("largest")}
+                  className="rounded-full px-4"
+                >
+                  Eng katta
+                </Button>
+                <div className="h-4 w-px bg-border mx-2" />
+                <Button
+                  variant={activeFilter === "mine" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleFilterChange("mine")}
+                  className="rounded-full px-4"
+                >
+                  Menikilar
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -175,9 +219,9 @@ export function ExploreDatasetsPage() {
                             <div className="flex items-center gap-2 mb-2">
                               <CardTitle className="text-lg">{dataset.name}</CardTitle>
                               {dataset.is_public ? (
-                                <Globe className="h-4 w-4 text-green-500" title="Ommaviy" />
+                                <Globe className="h-4 w-4 text-green-500" />
                               ) : (
-                                <Lock className="h-4 w-4 text-muted-foreground" title="Shaxsiy" />
+                                <Lock className="h-4 w-4 text-muted-foreground" />
                               )}
                             </div>
                             <CardDescription>{dataset.description || "Tavsif yo'q"}</CardDescription>
@@ -212,7 +256,7 @@ export function ExploreDatasetsPage() {
                             variant="outline"
                             size="sm"
                             className="gap-2"
-                            onClick={(e) => {
+                            onClick={(e: React.MouseEvent) => {
                               e.preventDefault();
                               e.stopPropagation();
                               window.location.href = `/dashboard/dataset/${dataset.id}/edit`;

@@ -230,6 +230,20 @@ export function QuickAddEntryPage() {
         );
     }
 
+    const getDatasetTypeLabel = (type: string) => {
+        const types: Record<string, string> = {
+            "instruction": "Instruction Dataset",
+            "parallel": "Parallel Corpus",
+            "parallel_corpus": "Parallel Corpus",
+            "ner": "NER Dataset",
+            "qa": "QA Dataset",
+            "question_answering": "QA Dataset",
+            "classification": "Classification",
+            "sentiment": "Sentiment Analysis"
+        };
+        return types[type.toLowerCase()] || type;
+    };
+
     const renderFormByType = () => {
         if (!dataset) return null;
 
@@ -542,10 +556,10 @@ export function QuickAddEntryPage() {
                                         Yangi yozuv
                                     </CardTitle>
                                     <CardDescription>
-                                        {dataset?.type} turi uchun ma'lumot kiriting
+                                        {dataset?.type && getDatasetTypeLabel(dataset.type)} turi uchun ma'lumot kiriting
                                     </CardDescription>
                                 </div>
-                                <Badge variant="secondary">{dataset?.type}</Badge>
+                                <Badge variant="secondary">{dataset?.type && getDatasetTypeLabel(dataset.type)}</Badge>
                             </div>
                         </CardHeader>
                         <CardContent>

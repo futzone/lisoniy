@@ -32,7 +32,6 @@ export function HamjamiyatPage() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [popularTags, setPopularTags] = useState<{ tag: string, contents: number }[]>([]);
-  const [topAuthors, setTopAuthors] = useState<Author[]>([]);
   const { user } = useAuthStore();
   const limit = 10;
 
@@ -70,14 +69,10 @@ export function HamjamiyatPage() {
     }
   };
 
-  const fetchTagsAndAuthors = async () => {
+  const fetchTags = async () => {
     try {
-      const [tags, authors] = await Promise.all([
-        postsApi.getPopularTags(),
-        postsApi.getTopAuthors()
-      ]);
+      const tags = await postsApi.getPopularTags();
       setPopularTags(tags);
-      setTopAuthors(authors);
     } catch (error) {
       console.error("Failed to fetch sidebar data:", error);
     }
@@ -85,7 +80,7 @@ export function HamjamiyatPage() {
 
   useEffect(() => {
     fetchPosts(true);
-    fetchTagsAndAuthors();
+    fetchTags();
   }, [activeTab]);
 
   const handleTabChange = (value: string) => {
@@ -209,34 +204,6 @@ export function HamjamiyatPage() {
   const Sidebar = () => (
     <div className="space-y-6">
       <CreatePostDialog onPostCreated={() => fetchPosts(true)} />
-      <Card className="hover:border-primary/50 transition-colors">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Award className="h-5 w-5 text-primary" />
-            Top Mualliflar
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {topAuthors.map((author, index) => (
-            <Link key={index} to={`/hamjamiyat/author/${authorToSlug(author.name)}`} className="block group">
-              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                <Avatar className="group-hover:scale-110 transition-transform">
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white">
-                    {author.avatar}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">{author.name}</p>
-                  <p className="text-xs text-muted-foreground">{author.specialization}</p>
-                </div>
-                <Badge variant="outline" className="text-xs group-hover:bg-primary group-hover:text-white transition-colors">
-                  {author.contributions}
-                </Badge>
-              </div>
-            </Link>
-          ))}
-        </CardContent>
-      </Card>
 
       <Card className="hover:border-primary/50 transition-colors">
         <CardHeader className="pb-3">
@@ -248,7 +215,7 @@ export function HamjamiyatPage() {
         <CardContent>
           <div className="flex flex-wrap gap-2">
             {popularTags.length > 0 ? (
-              popularTags.map(tag => (
+              popularTags.map((tag: any) => (
                 <Link key={tag.tag} to={`/hamjamiyat/tag/${tag.tag}`}>
                   <Badge
                     variant="secondary"

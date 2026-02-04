@@ -107,14 +107,14 @@ export const datasetApi = {
         return apiClient.get<DatasetListResponse>(`/api/v1/datasets/me?offset=${offset}&limit=${limit}`);
     },
 
-    async getPublicDatasets(offset = 0, limit = 20, type?: string): Promise<DatasetListResponse> {
-        let url = `/api/v1/datasets/public?offset=${offset}&limit=${limit}`;
+    async getPublicDatasets(offset = 0, limit = 20, type?: string, sortBy: string = "new"): Promise<DatasetListResponse> {
+        let url = `/api/v1/datasets/public?offset=${offset}&limit=${limit}&sort_by=${sortBy}`;
         if (type) url += `&dataset_type=${type}`;
         return apiClient.get<DatasetListResponse>(url);
     },
 
-    async searchDatasets(query?: string, type?: string, offset = 0, limit = 20): Promise<DatasetListResponse> {
-        let url = `/api/v1/datasets/search/all?offset=${offset}&limit=${limit}`;
+    async searchDatasets(query?: string, type?: string, offset = 0, limit = 20, sortBy: string = "new"): Promise<DatasetListResponse> {
+        let url = `/api/v1/datasets/search/all?offset=${offset}&limit=${limit}&sort_by=${sortBy}`;
         if (query) url += `&q=${encodeURIComponent(query)}`;
         if (type) url += `&dataset_type=${type}`;
         return apiClient.get<DatasetListResponse>(url);
@@ -196,5 +196,20 @@ export const datasetApi = {
 
     async isStarred(datasetId: string): Promise<{ is_starred: boolean }> {
         return apiClient.get<{ is_starred: boolean }>(`/api/v1/datasets/${datasetId}/starred`);
+    },
+
+    async downloadDataset(id: string, format: 'json' | 'csv') {
+        const response: any = await apiClient.get<Blob>(`/api/v1/datasets/${id}/download?format=${format}`, {
+            responseType: 'blob'
+        });
+
+        const url = window.URL.createObjectURL(response);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `dataset_${id}.${format}`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
     }
 };

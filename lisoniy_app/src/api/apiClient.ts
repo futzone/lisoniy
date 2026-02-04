@@ -6,6 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000
 interface RequestConfig extends RequestInit {
     headers?: Record<string, string>;
     _retry?: boolean;
+    responseType?: 'json' | 'blob';
 }
 
 /**
@@ -94,6 +95,10 @@ export const apiClient = {
                 return {} as T;
             }
 
+            if (config.responseType === 'blob') {
+                return response.blob() as any;
+            }
+
             return response.json();
 
         } catch (error) {
@@ -101,8 +106,8 @@ export const apiClient = {
         }
     },
 
-    get<T>(endpoint: string, headers?: Record<string, string>) {
-        return this.request<T>(endpoint, { method: 'GET', headers });
+    get<T>(endpoint: string, config: RequestConfig = {}) {
+        return this.request<T>(endpoint, { method: 'GET', ...config });
     },
 
     post<T>(endpoint: string, body: any, headers?: Record<string, string>) {

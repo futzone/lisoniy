@@ -316,13 +316,13 @@ class UserService:
 
         try:
             # Aggregate posts by owner - explicitly group by all selected columns for safety
+            # We use a subquery or join to count posts
             stmt = (
                 select(
                     User.id, 
                     User.full_name, 
                     User.email, 
                     User.is_verified, 
-                    User.avatar_url if hasattr(User, 'avatar_url') else sql_func.literal("").label("avatar_url"), # Handle potential missing column gracefully
                     sql_func.count(Post.id).label("contributions")
                 )
                 .join(Post, User.id == Post.owner_id)
@@ -353,6 +353,11 @@ class UserService:
                 
                 # Safe name extraction
                 display_name = row.full_name or (row.email.split('@')[0] if row.email else "User")
+                
+                # Try to get avatar_url from row safely if it was added to select, 
+                # but better to fetch it if needed or just use fallback.
+                # Actually, User model has relationship to meta which has avatar_image.
+                # Let's adjust query to join with meta for avatar
                 
                 authors.append({
                     "id": row.id,

@@ -17,17 +17,26 @@ import {
   Users,
   FileText,
   Eye,
-  Edit,
   Plus,
   Loader2,
   Globe,
   Lock,
   Scale,
   Clock,
-  User
+  User,
+  ChevronDown,
+  FileJson,
+  FileSpreadsheet,
+  Edit
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { datasetApi, DatasetResponse, DatasetMetaResponse, DataEntryResponse } from "@/api/datasetApi";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/app/components/ui/dropdown-menu";
 
 export function DatasetDetailPage() {
   const { datasetId } = useParams();
@@ -73,12 +82,15 @@ export function DatasetDetailPage() {
           console.log("Could not fetch entries");
         }
         // Check if user has starred this dataset
-        if (user) {
+        const storedUser = localStorage.getItem('auth-storage');
+        const hasUser = user || (storedUser && JSON.parse(storedUser)?.state?.user);
+
+        if (hasUser) {
           try {
             const starredData = await datasetApi.isStarred(datasetId);
             setIsStarred(starredData.is_starred);
-          } catch {
-            // Not critical if this fails
+          } catch (starErr) {
+            console.error("Failed to fetch star status:", starErr);
           }
         }
       } catch (err: unknown) {
@@ -120,11 +132,28 @@ export function DatasetDetailPage() {
   const isOwner = user?.id === dataset?.creator_id;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('uz-UZ', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${year}.${month}.${day}, ${hours}:${minutes}`;
+  };
+
+  const getDatasetTypeLabel = (type: string) => {
+    const types: Record<string, string> = {
+      "instruction": "Instruction Dataset",
+      "parallel": "Parallel Corpus",
+      "parallel_corpus": "Parallel Corpus",
+      "ner": "NER Dataset",
+      "qa": "QA Dataset",
+      "question_answering": "QA Dataset",
+      "classification": "Classification",
+      "sentiment": "Sentiment Analysis"
+    };
+    return types[type.toLowerCase()] || type;
   };
 
   const getRelativeTime = (dateString: string) => {
@@ -213,10 +242,25 @@ export function DatasetDetailPage() {
                 <span className="hidden sm:inline">{isStarred ? 'Yulduzlangan' : 'Yulduz'}</span>
                 {meta && meta.stars_count > 0 && <span>{meta.stars_count}</span>}
               </Button>
-              <Button className="gap-2">
-                <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">Yuklab olish</span>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <Download className="h-4 w-4" />
+                    <span className="hidden sm:inline">Yuklab olish</span>
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => datasetApi.downloadDataset(datasetId as string, 'json')} className="gap-2 cursor-pointer">
+                    <FileJson className="h-4 w-4 text-blue-500" />
+                    JSON formatda
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => datasetApi.downloadDataset(datasetId as string, 'csv')} className="gap-2 cursor-pointer">
+                    <FileSpreadsheet className="h-4 w-4 text-green-500" />
+                    CSV formatda
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
@@ -231,7 +275,7 @@ export function DatasetDetailPage() {
             <div>
               <div className="flex items-center gap-3 mb-4 flex-wrap">
                 <h1 className="text-3xl font-bold">{dataset.name}</h1>
-                <Badge variant="secondary" className="text-sm">{dataset.type}</Badge>
+                <Badge variant="secondary" className="text-sm">{getDatasetTypeLabel(dataset.type)}</Badge>
                 {dataset.is_public ? (
                   <Badge variant="outline" className="text-sm gap-1">
                     <Globe className="h-3 w-3" />
@@ -439,24 +483,6 @@ export function DatasetDetailPage() {
               </CardContent>
             </Card>
 
-            {/* Actions */}
-            {isOwner && (
-              <Card className="border-2">
-                <CardHeader>
-                  <CardTitle className="text-lg">Harakatlar</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(`/dashboard/dataset/${datasetId}/add`)}>
-                    <Plus className="h-4 w-4" />
-                    Yozuv qo'shish
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(`/dashboard/dataset/${datasetId}/edit`)}>
-                    <Edit className="h-4 w-4" />
-                    Tahrirlash
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
           </div>
         </div>
       </main>

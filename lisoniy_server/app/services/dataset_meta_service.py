@@ -85,20 +85,27 @@ class DatasetMetaService:
         await db.flush()
         return meta
 
-    async def increment_view_count(db: AsyncSession, dataset_id: UUID) -> None:
+    @staticmethod
+    async def increment_views(db: AsyncSession, dataset_id: UUID) -> None:
         """
-        Increment review count for a dataset
+        Increment view counter for a dataset (creates meta if missing)
         
         Args:
             db: Database session
             dataset_id: UUID of the dataset
         """
-        # Update views_count
-        await db.execute(
+        # Try to update first
+        result = await db.execute(
             update(DatasetMeta)
             .where(DatasetMeta.dataset_id == dataset_id)
-            .values(views_count=DatasetMeta.views_count + 1)
+            .values(views_count=func.coalesce(DatasetMeta.views_count, 0) + 1)
         )
+        
+        # If no meta record found, create one
+        if result.rowcount == 0:
+            meta = DatasetMeta(dataset_id=dataset_id, views_count=1)
+            db.add(meta)
+        
         await db.flush()
 
     
@@ -240,23 +247,7 @@ class DatasetMetaService:
         await db.execute(
             update(DatasetMeta)
             .where(DatasetMeta.dataset_id == dataset_id)
-            .values(downloads_count=DatasetMeta.downloads_count + 1)
-        )
-        await db.flush()
-    
-    @staticmethod
-    async def increment_views(db: AsyncSession, dataset_id: UUID) -> None:
-        """
-        Increment view counter for a dataset
-        
-        Args:
-            db: Database session
-            dataset_id: UUID of the dataset
-        """
-        await db.execute(
-            update(DatasetMeta)
-            .where(DatasetMeta.dataset_id == dataset_id)
-            .values(views_count=DatasetMeta.views_count + 1)
+            .values(downloads_count=func.coalesce(DatasetMeta.downloads_count, 0) + 1)
         )
         await db.flush()
     
