@@ -1,0 +1,27 @@
+# --- General ---
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# --- Frontend (lisoniy_app - React JS) ---
+lisoniy_app/node_modules/
+lisoniy_app/build/
+lisoniy_app/dist/
+lisoniy_app/.env
+lisoniy_app/.env.local
+lisoniy_app/.env.development.local
+lisoniy_app/.env.test.local
+lisoniy_app/.env.production.local
+
+# --- Backend (lisoniy_server - Python) ---
+lisoniy_server/__pycache__/
+lisoniy_server/*.py[cod]
+lisoniy_server/*$py.class
+lisoniy_server/.venv/
+lisoniy_server/venv/
+lisoniy_server/env/
+lisoniy_server/.env
+lisoniy_server/db.sqlite3
+lisoniy_server/.pytest_cache/
+lisoniy_server/instance/

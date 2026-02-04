@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Post Creation</title>
+</head>
+<body>
+    <h1>Test Post Creation</h1>
+    <form id="postForm">
+        <div>
+            <label>Title:</label><br>
+            <input type="text" id="title" value="Test uchun discussion" style="width: 400px;">
+        </div>
+        <div>
+            <label>Body:</label><br>
+            <textarea id="body" style="width: 400px; height: 100px;">It is a test body</textarea>
+        </div>
+        <div>
+            <label>Type:</label><br>
+            <select id="type">
+                <option value="discussion">Discussion</option>
+                <option value="article">Article</option>
+            </select>
+        </div>
+        <div>
+            <label>Tags (comma separated):</label><br>
+            <input type="text" id="tags" value="test, demo" style="width: 400px;">
+        </div>
+        <div>
+            <label>Files:</label><br>
+            <input type="file" id="files" multiple>
+        </div>
+        <br>
+        <button type="submit">Create Post</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('postForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('body', document.getElementById('body').value);
+            formData.append('type', document.getElementById('type').value);
+            formData.append('tags', document.getElementById('tags').value);
+            
+            const files = document.getElementById('files').files;
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('files', files[i]);
+                }
+            }
+
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/posts/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzY5NTM2OTE1LCJ0eXBlIjoiYWNjZXNzIn0.rZ0pwO3plWxp44eiY3HESK8SW-FzpzXrJJ18Lq-yzJg'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <h2>Response (${response.status}):</h2>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h2>Error:</h2>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

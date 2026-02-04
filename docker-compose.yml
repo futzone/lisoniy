@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: lisoniy_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fastapi_auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lisoniy_network
+
+  # Redis Cache & Message Broker
+  redis:
+    image: redis:7-alpine
+    container_name: lisoniy_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - lisoniy_network
+
+  # FastAPI Backend Application
+  backend:
+    build:
+      context: ./lisoniy_server
+      dockerfile: Dockerfile
+    container_name: lisoniy_backend
+    command: /app/scripts/start.sh
+    volumes:
+      - ./lisoniy_server:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./lisoniy_server/.env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/fastapi_auth
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - lisoniy_network
+
+  # React Frontend Application
+  frontend:
+    build:
+      context: ./lisoniy_app
+      dockerfile: Dockerfile
+    container_name: lisoniy_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - lisoniy_network
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000/api/v1
+
+  # Celery Worker
+  celery_worker:
+    build:
+      context: ./lisoniy_server
+      dockerfile: Dockerfile
+    container_name: lisoniy_celery_worker
+    command: celery -A app.tasks.email_tasks worker --loglevel=info
+    volumes:
+      - ./lisoniy_server:/app
+    env_file:
+      - ./lisoniy_server/.env
+    depends_on:
+      - redis
+      - postgres
+      - backend
+    networks:
+      - lisoniy_network
+
+  # Celery Flower (Monitoring)
+  celery_flower:
+    build:
+      context: ./lisoniy_server
+      dockerfile: Dockerfile
+    container_name: lisoniy_celery_flower
+    command: celery -A app.tasks.email_tasks flower --port=5555
+    volumes:
+      - ./lisoniy_server:/app
+    ports:
+      - "5555:5555"
+    env_file:
+      - ./lisoniy_server/.env
+    depends_on:
+      - redis
+      - celery_worker
+    networks:
+      - lisoniy_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  lisoniy_network:
+    driver: bridge
