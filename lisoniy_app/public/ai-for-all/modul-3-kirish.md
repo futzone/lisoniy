@@ -51,7 +51,7 @@ Birinchi javob mukammal bo'lmasa — qayta so'rang.
 
 ## Muhim Ogohlantirish
 
-⚠️ **SI mutaxassis EMAS**
+- ⚠️ **SI mutaxassis EMAS**
 
 - **Tibbiyot:** SI shifokor emas, diagnostika qo'ymang
 - **Huquq:** SI advokat emas, hukm chiqarmang
