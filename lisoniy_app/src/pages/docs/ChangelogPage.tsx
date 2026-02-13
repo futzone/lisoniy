@@ -17,6 +17,16 @@ interface ChangelogEntry {
 
 const changelog: ChangelogEntry[] = [
   {
+    version: "0.1.6",
+    date: "2026-02-13",
+    type: "patch",
+    changes: [
+      { category: "improvement", description: "📱 **Mobil dizayn** — Barcha sahifalar mobil qurilmalar uchun to'liq optimizatsiya qilindi" },
+      { category: "fix", description: "🎨 **Kartalar va widgetlar** — Mobil ko'rinishda to'g'ri o'lchamlar va paddinglar" },
+      { category: "improvement", description: "📐 **Responsive grid** — Bosh sahifa, O'rganing, Profil va Hub sahifalari yangilandi" },
+    ],
+  },
+  {
     version: "0.1.5",
     date: "2026-02-13",
     type: "patch",

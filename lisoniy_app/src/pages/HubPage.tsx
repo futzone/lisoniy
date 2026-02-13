@@ -47,53 +47,53 @@ export function HubPage() {
   }, []);
 
   return (
-    <div className="container px-4 py-8">
-      <div className="mb-8">
-        <h1 className="mb-3 text-4xl font-bold text-foreground">
+    <div className="container px-3 sm:px-4 py-4 sm:py-8">
+      <div className="mb-4 sm:mb-8">
+        <h1 className="mb-2 sm:mb-3 text-xl sm:text-4xl font-bold text-foreground">
           Lisoniy Hub — Hamjamiyat
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-sm sm:text-lg text-muted-foreground">
           Bilim almashish, muhokama va hamkorlik platformasi
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-12">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-12">
         {/* Main Feed */}
         <div className="lg:col-span-8">
-          <Tabs defaultValue="all" className="mb-6">
-            <TabsList>
-              <TabsTrigger value="all">Barchasi</TabsTrigger>
-              <TabsTrigger value="discussions">Muhokamalar</TabsTrigger>
-              <TabsTrigger value="articles">Maqolalar</TabsTrigger>
+          <Tabs defaultValue="all" className="mb-4 sm:mb-6">
+            <TabsList className="w-full sm:w-auto">
+              <TabsTrigger value="all" className="text-xs sm:text-sm">Barchasi</TabsTrigger>
+              <TabsTrigger value="discussions" className="text-xs sm:text-sm">Muhokamalar</TabsTrigger>
+              <TabsTrigger value="articles" className="text-xs sm:text-sm">Maqolalar</TabsTrigger>
             </TabsList>
           </Tabs>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {loading ? (
                 <div className="text-center py-10">Yuklanmoqda...</div>
             ) : posts.length === 0 ? (
                 <div className="text-center py-10 text-muted-foreground">Hozircha postlar yo'q.</div>
             ) : posts.map((post: HubPost) => (
               <Card key={post.id} className="transition-all hover:shadow-md hover:border-primary/50">
-                <CardContent className="p-6">
-                  <div className="flex gap-4">
+                <CardContent className="p-3 sm:p-6">
+                  <div className="flex gap-3 sm:gap-4">
                     {/* Avatar */}
                     <div className="flex-shrink-0">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      <div className="flex h-8 w-8 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs sm:text-base">
                         <span className="font-semibold">{post.authorAvatar}</span>
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <Link to={`/hamjamiyat/${post.type === 'article' ? 'article' : 'discussion'}/${post.id}`}>
-                        <h3 className="mb-2 text-xl font-semibold text-foreground hover:text-primary cursor-pointer">
+                        <h3 className="mb-1 sm:mb-2 text-sm sm:text-xl font-semibold text-foreground hover:text-primary cursor-pointer line-clamp-2">
                           {post.title}
                         </h3>
                       </Link>
-                      <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="mb-2 sm:mb-3 flex flex-wrap items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
                         <User className="h-3 w-3" />
-                        <span>{post.author}</span>
+                        <span className="truncate max-w-[80px] sm:max-w-none">{post.author}</span>
                         <span>•</span>
                         <Calendar className="h-3 w-3" />
                         <span>{post.date}</span>

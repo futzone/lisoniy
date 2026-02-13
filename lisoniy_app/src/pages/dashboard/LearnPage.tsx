@@ -76,139 +76,139 @@ export function LearnPage() {
         url={`${baseUrl}/dashboard/learn`}
         structuredData={coursesSchema}
       />
-      <div className="p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <div className="p-3 sm:p-6">
+        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold flex items-center gap-3">
-                <BookOpen className="h-8 w-8 text-primary" />
+              <h1 className="text-xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-3">
+                <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                 O'rganing
               </h1>
-              <p className="text-muted-foreground mt-2">
+              <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
                 O'zbek NLP va lingvistika bo'yicha to'liq ta'lim materiallari
               </p>
             </div>
           </div>
 
           {/* Categories Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             <Link to="/dashboard/learn/korpus-lingvistikasi">
-              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-2xl mb-3">
+              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardHeader className="p-3 sm:p-6">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-3">
                     📚
                   </div>
-                  <CardTitle>Korpus Lingvistikasi</CardTitle>
-                  <CardDescription>Til korpuslari, annotatsiya va parallel matnlar</CardDescription>
+                  <CardTitle className="text-sm sm:text-base">Korpus Lingvistikasi</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm line-clamp-2">Til korpuslari, annotatsiya va parallel matnlar</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">6 ta mavzu</p>
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">6 ta mavzu</p>
                 </CardContent>
               </Card>
             </Link>
 
             <Link to="/dashboard/learn/uzbek-morphology">
-              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl mb-3">
+              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardHeader className="p-3 sm:p-6">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-3">
                     🔤
                   </div>
-                  <CardTitle>O'zbek Tili Morfologiyasi</CardTitle>
-                  <CardDescription>Agglyutinativ tillar va morfologik tahlil</CardDescription>
+                  <CardTitle className="text-sm sm:text-base">O'zbek Morfologiyasi</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm line-clamp-2">Agglyutinativ tillar va morfologik tahlil</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">5 ta mavzu</p>
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">5 ta mavzu</p>
                 </CardContent>
               </Card>
             </Link>
 
             <Link to="/dashboard/learn/nlp-basics">
-              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-2xl mb-3">
+              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardHeader className="p-3 sm:p-6">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-3">
                     🤖
                   </div>
-                  <CardTitle>NLP Asoslari</CardTitle>
-                  <CardDescription>Preprocessing, tokenizatsiya va matn tahlili</CardDescription>
+                  <CardTitle className="text-sm sm:text-base">NLP Asoslari</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm line-clamp-2">Preprocessing, tokenizatsiya va matn tahlili</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">28 ta mavzu</p>
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">28 ta mavzu</p>
                 </CardContent>
               </Card>
             </Link>
 
             <Link to="/dashboard/learn/large-language-models">
-              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-2xl mb-3">
+              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardHeader className="p-3 sm:p-6">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-3">
                     🧠
                   </div>
-                  <CardTitle>Katta Til Modellari</CardTitle>
-                  <CardDescription>BERT, GPT va transformer arxitekturasi</CardDescription>
+                  <CardTitle className="text-sm sm:text-base">Katta Til Modellari</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm line-clamp-2">BERT, GPT va transformer arxitekturasi</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">Tez orada qo'shiladi...</p>
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Tez orada...</p>
                 </CardContent>
               </Card>
             </Link>
 
             <Link to="/dashboard/learn/speech-technologies">
-              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-2xl mb-3">
+              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardHeader className="p-3 sm:p-6">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-3">
                     🎙️
                   </div>
-                  <CardTitle>Nutq Texnologiyalari</CardTitle>
-                  <CardDescription>ASR, TTS va ovozli ma'lumotlar</CardDescription>
+                  <CardTitle className="text-sm sm:text-base">Nutq Texnologiyalari</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm line-clamp-2">ASR, TTS va ovozli ma'lumotlar</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">Tez orada qo'shiladi...</p>
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Tez orada...</p>
                 </CardContent>
               </Card>
             </Link>
 
             <Link to="/dashboard/learn/specialized-areas">
-              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-2xl mb-3">
+              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardHeader className="p-3 sm:p-6">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-3">
                     🎯
                   </div>
-                  <CardTitle>Ixtisoslashgan Yo'nalishlar</CardTitle>
-                  <CardDescription>Dialektlar, inklyuziv texnologiyalar</CardDescription>
+                  <CardTitle className="text-sm sm:text-base">Ixtisoslashgan</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm line-clamp-2">Dialektlar, inklyuziv texnologiyalar</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">Tez orada qo'shiladi...</p>
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Tez orada...</p>
                 </CardContent>
               </Card>
             </Link>
 
             <Link to="/dashboard/learn/llm-project-management">
-              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-2xl mb-3">
+              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardHeader className="p-3 sm:p-6">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-3">
                     🤖
                   </div>
-                  <CardTitle>SI, KTM, Agentlar</CardTitle>
-                  <CardDescription>Sun'iy intellekt, katta til modellari va agentlar bilan ishlash — prompt engineering, RAG, AI agentlar va loyiha boshqaruvi</CardDescription>
+                  <CardTitle className="text-sm sm:text-base">SI, KTM, Agentlar</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm line-clamp-2">Prompt engineering, RAG, AI agentlar</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">6 ta modul, 32+ mavzu</p>
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">32+ mavzu</p>
                 </CardContent>
               </Card>
             </Link>
 
             <Link to="/dashboard/learn/ai-for-all">
-              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-2xl mb-3">
+              <Card className="border-2 hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardHeader className="p-3 sm:p-6">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-3">
                     🌟
                   </div>
-                  <CardTitle>Barcha Sohalar Uchun SI</CardTitle>
-                  <CardDescription>Istalgan kasb uchun sun'iy intellektdan foydalanish — shifokor, huquqshunos, o'qituvchi, marketer va boshqalar</CardDescription>
+                  <CardTitle className="text-sm sm:text-base">Barcha Uchun SI</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm line-clamp-2">Istalgan kasb uchun sun'iy intellekt</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">5 ta modul, 24 ta mavzu</p>
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">24 ta mavzu</p>
                 </CardContent>
               </Card>
             </Link>

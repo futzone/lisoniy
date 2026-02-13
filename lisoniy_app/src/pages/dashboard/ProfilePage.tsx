@@ -202,41 +202,56 @@ export function ProfilePage() {
 
   return (
     <AppLayout pageTitle="Mening profilim">
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Profile Header */}
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="relative group cursor-pointer" onClick={handleAvatarClick} title="Avatarni o'zgartirish">
-                <Avatar className="h-24 w-24 border-4 border-background shadow-sm transition-opacity group-hover:opacity-90">
-                  <AvatarImage
-                    src={meta?.avatar_image ? (meta.avatar_image.startsWith('http') ? meta.avatar_image : `${(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace('/api/v1', '')}${meta.avatar_image}`) : undefined}
-                    className="object-cover"
+          <CardContent className="pt-4 sm:pt-6 p-3 sm:p-6">
+            <div className="flex flex-col gap-4 sm:gap-6">
+              {/* Mobile: Avatar + Trophy row */}
+              <div className="flex items-start gap-3 sm:gap-6">
+                <div className="relative group cursor-pointer flex-shrink-0" onClick={handleAvatarClick} title="Avatarni o'zgartirish">
+                  <Avatar className="h-16 w-16 sm:h-24 sm:w-24 border-2 sm:border-4 border-background shadow-sm transition-opacity group-hover:opacity-90">
+                    <AvatarImage
+                      src={meta?.avatar_image ? (meta.avatar_image.startsWith('http') ? meta.avatar_image : `${(import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace('/api/v1', '')}${meta.avatar_image}`) : undefined}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-xl sm:text-3xl bg-primary/10 text-primary">
+                      {user?.name?.[0] || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                    <Camera className="h-5 w-5 sm:h-8 sm:w-8 text-white" />
+                  </div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleFileChange}
                   />
-                  <AvatarFallback className="text-3xl bg-primary/10 text-primary">
-                    {user?.name?.[0] || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                  <Camera className="h-8 w-8 text-white" />
                 </div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
+
+                {/* Trophy - visible on mobile in row */}
+                <div className="flex md:hidden flex-col items-center justify-center gap-1 p-2 sm:p-4 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-950/20 dark:to-amber-950/20 rounded-lg border-2 border-yellow-200 dark:border-yellow-900 flex-1">
+                  <Trophy className="h-5 w-5 sm:h-8 sm:w-8 text-yellow-500" />
+                  <div className="text-center">
+                    <div className="text-lg sm:text-2xl font-bold">{meta?.ball || 0}</div>
+                    <div className="text-[10px] sm:text-xs text-muted-foreground">Jami ball</div>
+                  </div>
+                  <Badge className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white border-0 text-[10px] sm:text-xs">
+                    #{meta?.rank || '-'} Reyting
+                  </Badge>
+                </div>
               </div>
 
-              <div className="flex-1 space-y-3">
-                <div className="flex justify-between items-start">
+              <div className="flex-1 space-y-2 sm:space-y-3">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                   <div>
-                    <h2 className="text-2xl font-bold flex items-center gap-2">
+                    <h2 className="text-lg sm:text-2xl font-bold flex flex-wrap items-center gap-1 sm:gap-2">
                       {meta?.user?.full_name || user?.name || meta?.nickname || 'Foydalanuvchi'}
-                      {meta?.nickname && <span className="text-base font-normal text-muted-foreground">(@{meta.nickname})</span>}
+                      {meta?.nickname && <span className="text-xs sm:text-base font-normal text-muted-foreground">(@{meta.nickname})</span>}
                     </h2>
-                    <p className="text-sm text-muted-foreground mt-1">{meta?.bio || "Bio ma'lumoti kiritilmagan"}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">{meta?.bio || "Bio ma'lumoti kiritilmagan"}</p>
                   </div>
                   <Dialog open={editOpen} onOpenChange={setEditOpen}>
                     <DialogTrigger asChild>
@@ -296,10 +311,10 @@ export function ProfilePage() {
                   </Dialog>
                 </div>
 
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground pt-2">
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    {user?.email || 'user@example.com'}
+                <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground pt-2">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <Mail className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="truncate max-w-[150px] sm:max-w-none">{user?.email || 'user@example.com'}</span>
                     {user?.isVerified ? (
                       <Badge variant="outline" className="ml-1 text-green-600 border-green-600">
                         <CheckCircle className="h-3 w-3 mr-1" />
@@ -383,45 +398,45 @@ export function ProfilePage() {
                       </Dialog>
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Qo'shildi: {formatDate(meta?.joined)}
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">Qo'shildi:</span> {formatDate(meta?.joined)}
                   </div>
                   {meta?.address && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
                       {meta.address}
                     </div>
                   )}
                   {meta?.education && (
-                    <div className="flex items-center gap-2">
-                      <GraduationCap className="h-4 w-4" />
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <GraduationCap className="h-3 w-3 sm:h-4 sm:w-4" />
                       {meta.education}
                     </div>
                   )}
                 </div>
 
-                <div className="flex gap-3 pt-2">
+                <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
                   {meta?.github_url && (
-                    <Button variant="outline" size="sm" className="gap-2" asChild>
+                    <Button variant="outline" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm h-7 sm:h-9 px-2 sm:px-3" asChild>
                       <a href={meta.github_url} target="_blank" rel="noopener noreferrer">
-                        <Github className="h-4 w-4" />
+                        <Github className="h-3 w-3 sm:h-4 sm:w-4" />
                         GitHub
                       </a>
                     </Button>
                   )}
                   {meta?.telegram_url && (
-                    <Button variant="outline" size="sm" className="gap-2" asChild>
+                    <Button variant="outline" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm h-7 sm:h-9 px-2 sm:px-3" asChild>
                       <a href={meta.telegram_url} target="_blank" rel="noopener noreferrer">
-                        <MessageSquare className="h-4 w-4" />
+                        <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
                         Telegram
                       </a>
                     </Button>
                   )}
                   {meta?.website_url && (
-                    <Button variant="outline" size="sm" className="gap-2" asChild>
+                    <Button variant="outline" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm h-7 sm:h-9 px-2 sm:px-3" asChild>
                       <a href={meta.website_url} target="_blank" rel="noopener noreferrer">
-                        <LinkIcon className="h-4 w-4" />
+                        <LinkIcon className="h-3 w-3 sm:h-4 sm:w-4" />
                         Website
                       </a>
                     </Button>
@@ -429,7 +444,8 @@ export function ProfilePage() {
                 </div>
               </div>
 
-              <div className="flex flex-col items-center justify-center gap-2 p-4 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-950/20 dark:to-amber-950/20 rounded-lg border-2 border-yellow-200 dark:border-yellow-900 min-w-[140px]">
+              {/* Desktop Trophy - hidden on mobile */}
+              <div className="hidden md:flex flex-col items-center justify-center gap-2 p-4 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-950/20 dark:to-amber-950/20 rounded-lg border-2 border-yellow-200 dark:border-yellow-900 min-w-[140px]">
                 <Trophy className="h-8 w-8 text-yellow-500" />
                 <div className="text-center">
                   <div className="text-2xl font-bold">{meta?.ball || 0}</div>
@@ -444,19 +460,19 @@ export function ProfilePage() {
         </Card>
 
         {/* Stats */}
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
           {userStats.map((stat) => {
             const Icon = stat.icon;
             return (
               <Card key={stat.label}>
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${stat.color}`}>
-                      <Icon className="h-5 w-5 text-white" />
+                <CardContent className="pt-3 sm:pt-6 p-3 sm:p-6">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-to-br ${stat.color}`}>
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                     </div>
                     <div>
-                      <div className="text-2xl font-bold">{stat.value}</div>
-                      <div className="text-xs text-muted-foreground">{stat.label}</div>
+                      <div className="text-lg sm:text-2xl font-bold">{stat.value}</div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1">{stat.label}</div>
                     </div>
                   </div>
                 </CardContent>
