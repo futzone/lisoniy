@@ -7,7 +7,7 @@ services:
     container_name: lisoniy_postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: LisoniySecureDB2026!
       POSTGRES_DB: fastapi_auth
     ports:
       - "5432:5432"
@@ -50,9 +50,6 @@ services:
       - "8000:8000"
     env_file:
       - ./lisoniy_server/.env
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/fastapi_auth
-      - REDIS_URL=redis://redis:6379/0
     depends_on:
       postgres:
         condition: service_healthy
@@ -66,6 +63,8 @@ services:
     build:
       context: ./lisoniy_app
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: https://api.lisoniy.uz
     container_name: lisoniy_frontend
     ports:
       - "3000:80"
@@ -73,8 +72,6 @@ services:
       - backend
     networks:
       - lisoniy_network
-    environment:
-      - VITE_API_BASE_URL=http://localhost:8000/api/v1
 
   # Celery Worker
   celery_worker:
@@ -110,6 +107,25 @@ services:
     depends_on:
       - redis
       - celery_worker
+    networks:
+      - lisoniy_network
+
+  # Telegram Bot
+  telegram_bot:
+    build:
+      context: ./lisoniy_server
+      dockerfile: Dockerfile
+    container_name: lisoniy_telegram_bot
+    command: python -m bot.main
+    volumes:
+      - ./lisoniy_server:/app
+    env_file:
+      - ./lisoniy_server/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - lisoniy_network
 

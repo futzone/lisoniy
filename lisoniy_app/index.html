@@ -2,10 +2,152 @@
 <html lang="uz">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Lisoniy - O'zbek tili uchun raqamli platforma: NLP vositalari, corpus, AI modellar va jamiyat" />
-    <title>Lisoniy - O'zbek Tili Raqamli Kelajagi</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>Lisoniy — O'zbek Tili va Sun'iy Intellekt Platformasi</title>
+    <meta name="title" content="Lisoniy — O'zbek Tili va Sun'iy Intellekt Platformasi" />
+    <meta name="description" content="O'zbek tili uchun bepul NLP kurslari, AI vositalari, datasetlar va til resurslari. Prompt Engineering, RAG, AI Agentlar, Transliteratsiya, Imlo tekshiruv va boshqalar." />
+    <meta name="keywords" content="O'zbek tili, Uzbek NLP, Sun'iy intellekt, AI, Lisoniy, Dataset, Corpus, O'zbekcha, NLP kurslari, Prompt Engineering, RAG, AI Agent, Transliteratsiya, Imlo tekshiruv, O'zbek morfologiyasi, Til modellari, LLM, ChatGPT o'zbek" />
+    <meta name="author" content="Lisoniy" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Uzbek" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://lisoniy.uz/" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/lisoniy_small.png" />
+    <link rel="apple-touch-icon" href="/lisoniy_small.png" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lisoniy.uz/" />
+    <meta property="og:title" content="Lisoniy — O'zbek Tili va Sun'iy Intellekt Platformasi" />
+    <meta property="og:description" content="O'zbek tili uchun bepul NLP kurslari, AI vositalari, datasetlar va til resurslari. Prompt Engineering, RAG, AI Agentlar va boshqalar." />
+    <meta property="og:image" content="https://lisoniy.uz/lisoniy_small.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="uz_UZ" />
+    <meta property="og:site_name" content="Lisoniy" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://lisoniy.uz/" />
+    <meta name="twitter:title" content="Lisoniy — O'zbek Tili va Sun'iy Intellekt Platformasi" />
+    <meta name="twitter:description" content="O'zbek tili uchun bepul NLP kurslari, AI vositalari, datasetlar va til resurslari." />
+    <meta name="twitter:image" content="https://lisoniy.uz/lisoniy_small.png" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#6366f1" />
+    <meta name="msapplication-TileColor" content="#6366f1" />
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://api.lisoniy.uz" />
+    <link rel="dns-prefetch" href="https://api.lisoniy.uz" />
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Lisoniy",
+      "alternateName": ["Лисоний", "Lisoniy.uz"],
+      "url": "https://lisoniy.uz",
+      "description": "O'zbek tili uchun NLP va Sun'iy Intellekt platformasi",
+      "inLanguage": "uz",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://lisoniy.uz/dashboard/explore-datasets?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Lisoniy",
+      "url": "https://lisoniy.uz",
+      "logo": "https://lisoniy.uz/lisoniy_small.png",
+      "description": "O'zbek tili uchun NLP va Sun'iy Intellekt platformasi",
+      "sameAs": [
+        "https://t.me/lisoniy"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "availableLanguage": ["uz", "ru", "en"]
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "Lisoniy",
+      "url": "https://lisoniy.uz",
+      "description": "O'zbek tili uchun bepul NLP va AI kurslari",
+      "areaServed": "UZ",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Bepul Kurslar",
+        "itemListElement": [
+          {
+            "@type": "Course",
+            "name": "NLP Asoslari",
+            "description": "Tabiiy tilni qayta ishlash asoslari",
+            "provider": {"@type": "Organization", "name": "Lisoniy"},
+            "isAccessibleForFree": true,
+            "inLanguage": "uz"
+          },
+          {
+            "@type": "Course",
+            "name": "SI, KTM, Agentlar",
+            "description": "Sun'iy intellekt, katta til modellari va agentlar bilan ishlash",
+            "provider": {"@type": "Organization", "name": "Lisoniy"},
+            "isAccessibleForFree": true,
+            "inLanguage": "uz"
+          },
+          {
+            "@type": "Course",
+            "name": "O'zbek Morfologiyasi",
+            "description": "O'zbek tili morfologik tahlili",
+            "provider": {"@type": "Organization", "name": "Lisoniy"},
+            "isAccessibleForFree": true,
+            "inLanguage": "uz"
+          }
+        ]
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Lisoniy Til Asboblari",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Transliteratsiya (Lotin-Kirill)",
+        "Imlo tekshiruv",
+        "NER Vizualizator",
+        "Lug'at"
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

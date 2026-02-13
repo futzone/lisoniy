@@ -108,6 +108,28 @@ export const authApi = {
     },
 
     /**
+     * Resend email verification OTP
+     * @throws ApiError with status 400 if already verified, 404 if user not found, 429 for rate limit
+     */
+    async resendVerification(email: string): Promise<{ message: string }> {
+        const response = await fetch(`${API_BASE_URL}/api/v1/auth/resend-verification`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+            const error: ApiError = await response.json();
+            error.status = response.status;
+            throw error;
+        }
+
+        return response.json();
+    },
+
+    /**
      * Login with email and password
      * @throws ApiError with status 401 for invalid credentials, 403 if email not verified, 429 for rate limit
      */

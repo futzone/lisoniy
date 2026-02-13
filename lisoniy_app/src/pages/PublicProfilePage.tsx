@@ -145,25 +145,25 @@ export function PublicProfilePage() {
                                 </div>
 
                                 <div className="flex gap-3 pt-2">
-                                    {meta.github && (
+                                    {meta.github_url && (
                                         <Button variant="outline" size="sm" className="gap-2" asChild>
-                                            <a href={meta.github} target="_blank" rel="noopener noreferrer">
+                                            <a href={meta.github_url} target="_blank" rel="noopener noreferrer">
                                                 <Github className="h-4 w-4" />
                                                 GitHub
                                             </a>
                                         </Button>
                                     )}
-                                    {meta.telegram && (
+                                    {meta.telegram_url && (
                                         <Button variant="outline" size="sm" className="gap-2" asChild>
-                                            <a href={meta.telegram} target="_blank" rel="noopener noreferrer">
+                                            <a href={meta.telegram_url} target="_blank" rel="noopener noreferrer">
                                                 <MessageSquare className="h-4 w-4" />
                                                 Telegram
                                             </a>
                                         </Button>
                                     )}
-                                    {meta.website && (
+                                    {meta.website_url && (
                                         <Button variant="outline" size="sm" className="gap-2" asChild>
-                                            <a href={meta.website} target="_blank" rel="noopener noreferrer">
+                                            <a href={meta.website_url} target="_blank" rel="noopener noreferrer">
                                                 <LinkIcon className="h-4 w-4" />
                                                 Website
                                             </a>

@@ -1,108 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
 import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
 import { ThumbsUp, MessageCircle, User, Calendar, TrendingUp, Award } from "lucide-react";
 import { Link } from "react-router-dom";
+import { formatDate } from "@/lib/utils";
 
-interface HubPost {
-  id: string;
-  title: string;
-  author: string;
-  authorAvatar: string;
-  content: string;
-  tags: string[];
-  upvotes: number;
-  comments: number;
-  date: string;
-  type: 'article' | 'discussion';
-}
-
-interface Contributor {
-  name: string;
-  avatar: string;
-  contributions: number;
-  rank: string;
-}
-
-const mockPosts: Post[] = [
-  {
-    id: "1",
-    title: "O'zbek tili uchun yangi NER modeli",
-    author: "Dilshod Axmedov",
-    authorAvatar: "DA",
-    content: "Named Entity Recognition (NER) modeli uchun yangi dataset yaratdim. 50,000 ta belgilangan jumla bor.",
-    tags: ["NLP", "Dataset", "NER"],
-    upvotes: 45,
-    comments: 12,
-    date: "2024-01-25"
-  },
-  {
-    id: "2",
-    title: "Transliteratsiya API - ochiq manba",
-    author: "Nodira Tursunova",
-    authorAvatar: "NT",
-    content: "Kirill-Lotin transliteratsiya uchun RESTful API yaratdim. GitHub'da mavjud.",
-    tags: ["API", "Open-Source", "Transliteratsiya"],
-    upvotes: 38,
-    comments: 8,
-    date: "2024-01-24"
-  },
-  {
-    id: "3",
-    title: "O'zbek grammatikasi uchun parser",
-    author: "Javohir Karimov",
-    authorAvatar: "JK",
-    content: "Morfologik tahlil va sintaktik parsing uchun yangi vosita. Testdan o'tkazish uchun yordam kerak.",
-    tags: ["Grammatika", "Parser", "Testing"],
-    upvotes: 52,
-    comments: 15,
-    date: "2024-01-23"
-  },
-  {
-    id: "4",
-    title: "Lisoniy platformasi haqida fikrlaringiz?",
-    author: "Malika Rahimova",
-    authorAvatar: "MR",
-    content: "Platformadan foydalanyapman. Juda yaxshi lekin ba'zi xususiyatlarni qo'shish mumkin deb o'ylayman.",
-    tags: ["Fikr", "Platform", "Taklif"],
-    upvotes: 29,
-    comments: 22,
-    date: "2024-01-22"
-  },
-  {
-    id: "5",
-    title: "O'zbek tilida sentiment analiz dataset",
-    author: "Aziz Yusupov",
-    authorAvatar: "AY",
-    content: "Ijtimoiy tarmoqlardan 100K+ xabar yig'ib sentiment analiz uchun dataset tayyorladim.",
-    tags: ["Dataset", "Sentiment", "Social Media"],
-    upvotes: 67,
-    comments: 18,
-    date: "2024-01-21",
-    type: 'article'
-  }
-];
-
-const topContributors: Contributor[] = [
-  { name: "Dilshod Axmedov", avatar: "DA", contributions: 156, rank: "Expert" },
-  { name: "Nodira Tursunova", avatar: "NT", contributions: 142, rank: "Expert" },
-  { name: "Javohir Karimov", avatar: "JK", contributions: 128, rank: "Advanced" },
-  { name: "Aziz Yusupov", avatar: "AY", contributions: 98, rank: "Advanced" },
-  { name: "Malika Rahimova", avatar: "MR", contributions: 76, rank: "Intermediate" }
-];
-
-const trendingTopics = [
-  { tag: "#NLP", count: 234 },
-  { tag: "#Dataset", count: 189 },
-  { tag: "#AI", count: 156 },
-  { tag: "#Transliteratsiya", count: 142 },
-  { tag: "#Grammatika", count: 98 }
-];
+// ... (keep interfaces)
 
 export function HubPage() {
   const [filter, setFilter] = useState<"all" | "discussions" | "articles">("all");
+  const [posts, setPosts] = useState<HubPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        // Use environment variable for API URL
+        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.lisoniy.uz';
+        const response = await fetch(`${apiUrl}/posts?limit=20`);
+        if (response.ok) {
+            const data = await response.json();
+            // Map API data to UI format if needed
+            const mappedPosts = data.items ? data.items.map((p: any) => ({
+                id: p.id,
+                title: p.title,
+                author: p.author?.full_name || "Unknown",
+                authorAvatar: p.author?.full_name?.[0] || "U",
+                content: p.content?.substring(0, 150) + "...",
+                tags: p.tags || [],
+                upvotes: p.upvotes || 0,
+                comments: p.comments_count || 0,
+                date: formatDate(p.created_at),
+                type: p.type || 'article'
+            })) : [];
+            setPosts(mappedPosts);
+        }
+      } catch (error) {
+        console.error("Failed to fetch posts", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   return (
     <div className="container px-4 py-8">
@@ -127,7 +69,11 @@ export function HubPage() {
           </Tabs>
 
           <div className="space-y-4">
-            {mockPosts.map((post: HubPost) => (
+            {loading ? (
+                <div className="text-center py-10">Yuklanmoqda...</div>
+            ) : posts.length === 0 ? (
+                <div className="text-center py-10 text-muted-foreground">Hozircha postlar yo'q.</div>
+            ) : posts.map((post: HubPost) => (
               <Card key={post.id} className="transition-all hover:shadow-md hover:border-primary/50">
                 <CardContent className="p-6">
                   <div className="flex gap-4">

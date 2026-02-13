@@ -14,7 +14,8 @@ from app.api.v1 import (
     datasets,
     entries,
     dataset_meta,
-    seo
+    seo,
+    leaderboard
 )
 
 api_router = APIRouter()
@@ -31,5 +32,6 @@ api_router.include_router(datasets.router, tags=["datasets"])
 api_router.include_router(entries.router, tags=["entries"])
 api_router.include_router(dataset_meta.router, tags=["dataset-meta"])
 api_router.include_router(seo.router, tags=["seo"])
+api_router.include_router(leaderboard.router, prefix="/leaderboard", tags=["leaderboard"])
 
 __all__ = ["api_router"]

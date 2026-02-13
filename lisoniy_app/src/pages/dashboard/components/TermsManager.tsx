@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { terminologyApi, type Category, type Term, type TermCreate, type TermUpdate } from "@/api/terminologyApi";
+import { formatDateTime } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card";
 import { Button } from "@/app/components/ui/button";
@@ -459,12 +460,12 @@ export function TermsManager() {
                             </div>
                             <div>
                                 <span className="block font-medium text-foreground">Yaratilgan sana:</span>
-                                {viewTerm?.created_at ? new Date(viewTerm.created_at).toLocaleString('uz-UZ') : "-"}
+                                {viewTerm?.created_at ? formatDateTime(viewTerm.created_at) : "-"}
                             </div>
                             {viewTerm?.updated_at && viewTerm.updated_at !== viewTerm.created_at && (
                                 <div className="col-span-2">
                                     <span className="block font-medium text-foreground">So'nggi tahrir:</span>
-                                    {new Date(viewTerm.updated_at).toLocaleString('uz-UZ')}
+                                    {formatDateTime(viewTerm.updated_at)}
                                 </div>
                             )}
                         </div>

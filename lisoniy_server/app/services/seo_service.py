@@ -353,3 +353,148 @@ Disallow: /tools/
 
 Sitemap: {}/sitemap.xml
 """.format(SEOService.BASE_URL)
+
+    @staticmethod
+    async def generate_post_share_html(db: AsyncSession, post_id: int) -> str:
+        """
+        Generate HTML page with OG meta tags for social sharing
+        
+        Args:
+            db: Database session
+            post_id: Post ID
+            
+        Returns:
+            HTML string with meta tags
+        """
+        from app.services.post_service import PostService
+        
+        post = await PostService.get_post(db, post_id)
+        if not post:
+            raise ValueError("Post not found")
+        
+        # Clean description
+        clean_body = post.body.replace("\n", " ").replace('"', "'").strip()
+        description = clean_body[:200] + "..." if len(clean_body) > 200 else clean_body
+        
+        # URL path based on type
+        url_path = f"/hamjamiyat/article/{post.id}" if post.type == "article" else f"/hamjamiyat/discussion/{post.id}"
+        full_url = f"{SEOService.BASE_URL}{url_path}"
+        
+        # Author name
+        author_name = post.owner.full_name if post.owner else "Lisoniy"
+        
+        # Handle datetime conversion
+        if hasattr(post.created_at, 'isoformat'):
+            published_time = post.created_at.isoformat()
+        else:
+            published_time = str(post.created_at)
+        
+        html = f"""<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>{post.title} | Lisoniy</title>
+    <meta name="title" content="{post.title} | Lisoniy">
+    <meta name="description" content="{description}">
+    <meta name="author" content="{author_name}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{full_url}">
+    <meta property="og:title" content="{post.title}">
+    <meta property="og:description" content="{description}">
+    <meta property="og:image" content="{SEOService.BASE_URL}/og-image.png">
+    <meta property="og:site_name" content="Lisoniy">
+    <meta property="og:locale" content="uz_UZ">
+    <meta property="article:author" content="{author_name}">
+    <meta property="article:published_time" content="{published_time}">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{full_url}">
+    <meta name="twitter:title" content="{post.title}">
+    <meta name="twitter:description" content="{description}">
+    <meta name="twitter:image" content="{SEOService.BASE_URL}/og-image.png">
+    
+    <!-- Telegram specific -->
+    <meta property="telegram:channel" content="@lisoniy">
+    
+    <!-- Redirect to actual page -->
+    <meta http-equiv="refresh" content="0; url={full_url}">
+    <link rel="canonical" href="{full_url}">
+</head>
+<body>
+    <p>Redirecting to <a href="{full_url}">{post.title}</a>...</p>
+    <script>window.location.href = "{full_url}";</script>
+</body>
+</html>"""
+        
+        return html
+    
+    @staticmethod
+    async def generate_dataset_share_html(db: AsyncSession, dataset_id: str) -> str:
+        """
+        Generate HTML page with OG meta tags for dataset sharing
+        
+        Args:
+            db: Database session
+            dataset_id: Dataset ID
+            
+        Returns:
+            HTML string with meta tags
+        """
+        from app.services.dataset_service import DatasetService
+        
+        dataset = await DatasetService.get_by_id(db, dataset_id)
+        if not dataset:
+            raise ValueError("Dataset not found")
+        
+        # Clean description
+        description = dataset.description or f"{dataset.name} - O'zbek tili uchun {dataset.type} dataseti"
+        description = description.replace('"', "'")[:200]
+        
+        full_url = f"{SEOService.BASE_URL}/datasets/{dataset.id}"
+        author_name = dataset.creator.full_name if dataset.creator else "Lisoniy"
+        
+        html = f"""<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>{dataset.name} | Lisoniy Datasets</title>
+    <meta name="title" content="{dataset.name} | Lisoniy Datasets">
+    <meta name="description" content="{description}">
+    <meta name="author" content="{author_name}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{full_url}">
+    <meta property="og:title" content="{dataset.name}">
+    <meta property="og:description" content="{description}">
+    <meta property="og:image" content="{SEOService.BASE_URL}/og-image.png">
+    <meta property="og:site_name" content="Lisoniy">
+    <meta property="og:locale" content="uz_UZ">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{full_url}">
+    <meta name="twitter:title" content="{dataset.name}">
+    <meta name="twitter:description" content="{description}">
+    <meta name="twitter:image" content="{SEOService.BASE_URL}/og-image.png">
+    
+    <!-- Redirect to actual page -->
+    <meta http-equiv="refresh" content="0; url={full_url}">
+    <link rel="canonical" href="{full_url}">
+</head>
+<body>
+    <p>Redirecting to <a href="{full_url}">{dataset.name}</a>...</p>
+    <script>window.location.href = "{full_url}";</script>
+</body>
+</html>"""
+        
+        return html

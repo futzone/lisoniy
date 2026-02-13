@@ -16,19 +16,21 @@ export function Footer() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Button size="lg" variant="outline" className="gap-2" asChild>
-              <a href="https://t.me/lisoniy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              <a href="https://t.me/lisoniy_community" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <Send className="h-5 w-5" />
                 Telegram
               </a>
             </Button>
             <Button size="lg" variant="outline" className="gap-2" asChild>
-              <a href="https://github.com/lisoniy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              <a href="https://github.com/futzone/lisoniy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <Github className="h-5 w-5" />
                 Github
               </a>
             </Button>
-            <Button size="lg" className="gap-2">
-              Kirish
+            <Button size="lg" className="gap-2" asChild>
+              <Link to="/auth/register">
+                Boshlash
+              </Link>
             </Button>
           </div>
         </div>
@@ -47,8 +49,11 @@ export function Footer() {
               <Link to="/about" className="hover:text-foreground transition-colors">
                 Biz haqimizda
               </Link>
-              <Link to="/hub" className="hover:text-foreground transition-colors">
-                Hamjamiyat
+              <Link to="/privacy" className="hover:text-foreground transition-colors">
+                Privacy
+              </Link>
+              <Link to="/terms" className="hover:text-foreground transition-colors">
+                Terms
               </Link>
             </div>
           </div>

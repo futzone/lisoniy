@@ -24,10 +24,14 @@ import {
   GraduationCap,
   Edit,
   Loader2,
-  Camera
+  Camera,
+  CheckCircle,
+  AlertCircle,
+  Send
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { userApi, UserMetaResponse, UserMetaUpdate } from '@/api/userApi';
+import { authApi } from '@/api/authApi';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/app/components/ui/dialog';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
@@ -36,12 +40,17 @@ import { toast } from 'sonner';
 import { AchievementsCard } from './components/AchievementsCard';
 
 export function ProfilePage() {
-  const { user } = useAuthStore();
+  const { user, setUserVerified } = useAuthStore();
   const [meta, setMeta] = useState<UserMetaResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [editOpen, setEditOpen] = useState(false);
+  const [verifyOpen, setVerifyOpen] = useState(false);
   const [formData, setFormData] = useState<UserMetaUpdate>({});
   const [saving, setSaving] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
 
   useEffect(() => {
     fetchMeta();
@@ -98,9 +107,9 @@ export function ProfilePage() {
       setFormData({
         nickname: data.nickname,
         address: data.address,
-        github_url: data.github,
-        telegram_url: data.telegram,
-        website_url: data.website,
+        github_url: data.github_url,
+        telegram_url: data.telegram_url,
+        website_url: data.website_url,
         education: data.education,
         bio: data.bio,
         avatar_image: data.avatar_image
@@ -125,6 +134,39 @@ export function ProfilePage() {
       toast.error("Profilni yangilashda xatolik yuz berdi");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSendOtp = async () => {
+    if (!user?.email) return;
+    try {
+      setSendingOtp(true);
+      await authApi.resendVerification(user.email);
+      setOtpSent(true);
+      toast.success("Tasdiqlash kodi emailingizga yuborildi");
+    } catch (error: any) {
+      console.error("Failed to send OTP:", error);
+      toast.error(error.detail || "Kod yuborishda xatolik yuz berdi");
+    } finally {
+      setSendingOtp(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!user?.email || !otpCode) return;
+    try {
+      setVerifyingOtp(true);
+      await authApi.verifyEmail({ email: user.email, otp: otpCode });
+      setUserVerified();
+      setVerifyOpen(false);
+      setOtpCode('');
+      setOtpSent(false);
+      toast.success("Email muvaffaqiyatli tasdiqlandi!");
+    } catch (error: any) {
+      console.error("Failed to verify OTP:", error);
+      toast.error(error.detail || "Tasdiqlashda xatolik yuz berdi. Kodni tekshiring.");
+    } finally {
+      setVerifyingOtp(false);
     }
   };
 
@@ -258,6 +300,88 @@ export function ProfilePage() {
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4" />
                     {user?.email || 'user@example.com'}
+                    {user?.isVerified ? (
+                      <Badge variant="outline" className="ml-1 text-green-600 border-green-600">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Tasdiqlangan
+                      </Badge>
+                    ) : (
+                      <Dialog open={verifyOpen} onOpenChange={(open) => {
+                        setVerifyOpen(open);
+                        if (!open) {
+                          setOtpCode('');
+                          setOtpSent(false);
+                        }
+                      }}>
+                        <DialogTrigger asChild>
+                          <Badge variant="outline" className="ml-1 text-yellow-600 border-yellow-600 cursor-pointer hover:bg-yellow-50 dark:hover:bg-yellow-950">
+                            <AlertCircle className="h-3 w-3 mr-1" />
+                            Tasdiqlanmagan
+                          </Badge>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[400px]">
+                          <DialogHeader>
+                            <DialogTitle>Emailni tasdiqlash</DialogTitle>
+                            <DialogDescription>
+                              {otpSent 
+                                ? `Tasdiqlash kodi ${user?.email} manziliga yuborildi. Kodni kiriting.`
+                                : "Emailingizni tasdiqlash uchun kod yuboramiz."
+                              }
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="py-4">
+                            {!otpSent ? (
+                              <Button 
+                                onClick={handleSendOtp} 
+                                disabled={sendingOtp}
+                                className="w-full"
+                              >
+                                {sendingOtp ? (
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Send className="mr-2 h-4 w-4" />
+                                )}
+                                Tasdiqlash kodini yuborish
+                              </Button>
+                            ) : (
+                              <div className="space-y-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="otp">Tasdiqlash kodi</Label>
+                                  <Input
+                                    id="otp"
+                                    placeholder="6 xonali kod"
+                                    value={otpCode}
+                                    onChange={(e) => setOtpCode(e.target.value)}
+                                    maxLength={6}
+                                  />
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button 
+                                    onClick={handleVerifyOtp} 
+                                    disabled={verifyingOtp || otpCode.length < 6}
+                                    className="flex-1"
+                                  >
+                                    {verifyingOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                    Tasdiqlash
+                                  </Button>
+                                  <Button 
+                                    variant="outline"
+                                    onClick={handleSendOtp} 
+                                    disabled={sendingOtp}
+                                  >
+                                    {sendingOtp ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      "Qayta yuborish"
+                                    )}
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
@@ -278,25 +402,25 @@ export function ProfilePage() {
                 </div>
 
                 <div className="flex gap-3 pt-2">
-                  {meta?.github && (
+                  {meta?.github_url && (
                     <Button variant="outline" size="sm" className="gap-2" asChild>
-                      <a href={meta.github} target="_blank" rel="noopener noreferrer">
+                      <a href={meta.github_url} target="_blank" rel="noopener noreferrer">
                         <Github className="h-4 w-4" />
                         GitHub
                       </a>
                     </Button>
                   )}
-                  {meta?.telegram && (
+                  {meta?.telegram_url && (
                     <Button variant="outline" size="sm" className="gap-2" asChild>
-                      <a href={meta.telegram} target="_blank" rel="noopener noreferrer">
+                      <a href={meta.telegram_url} target="_blank" rel="noopener noreferrer">
                         <MessageSquare className="h-4 w-4" />
                         Telegram
                       </a>
                     </Button>
                   )}
-                  {meta?.website && (
+                  {meta?.website_url && (
                     <Button variant="outline" size="sm" className="gap-2" asChild>
-                      <a href={meta.website} target="_blank" rel="noopener noreferrer">
+                      <a href={meta.website_url} target="_blank" rel="noopener noreferrer">
                         <LinkIcon className="h-4 w-4" />
                         Website
                       </a>

@@ -22,6 +22,7 @@ import {
     User,
     Settings,
     BookA,
+    ScrollText,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { AnimatePresence, motion } from 'motion/react';
@@ -82,6 +83,7 @@ const sidebarSections: SidebarSection[] = [
             { id: 'api', label: 'API Hujjatlari', icon: Code, href: '/docs/api' },
             { id: 'guidelines', label: 'Ko\'rsatmalar', icon: BookMarked, href: '/docs/guidelines' },
             { id: 'opensource', label: 'Ochiq manba', icon: Github, href: '/docs/opensource' },
+            { id: 'changelog', label: 'O\'zgarishlar', icon: ScrollText, href: '/docs/changelog' },
         ]
     },
     {

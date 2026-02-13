@@ -53,7 +53,8 @@ export function LoginPage() {
           id: userProfile.id,
           email: userProfile.email,
           fullName: userProfile.full_name,
-          phone: userProfile.phone || ""
+          phone: userProfile.phone || "",
+          isVerified: userProfile.is_verified
         },
         tokenResponse.access_token,
         tokenResponse.refresh_token
@@ -87,7 +88,7 @@ export function LoginPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative w-full max-w-md"
+        className="relative w-full max-w-md z-10"
       >
         <Link to="/">
           <Button variant="ghost" size="sm" className="mb-4">
@@ -176,8 +177,8 @@ export function LoginPage() {
       </motion.div>
 
       {/* Decorative orbs */}
-      <div className="absolute -top-24 left-0 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
-      <div className="absolute -bottom-24 right-0 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
+      <div className="absolute -top-24 left-0 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 right-0 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl pointer-events-none" />
     </div>
   );
 }

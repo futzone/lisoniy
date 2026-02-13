@@ -38,13 +38,14 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=30)
     REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=7)
     
-    # Email Configuration (SMTP)
+    # Email Configuration (SMTP / Resend)
     SMTP_HOST: str = Field(default="smtp.gmail.com")
     SMTP_PORT: int = Field(default=587)
     SMTP_USER: str = Field(default="")
     SMTP_PASSWORD: str = Field(default="")
     SMTP_FROM_EMAIL: str = Field(default="noreply@example.com")
     SMTP_FROM_NAME: str = Field(default="FastAPI Auth System")
+    RESEND_API_KEY: str = Field(default="")
     
     # Celery Configuration
     CELERY_BROKER_URL: str = Field(default="redis://localhost:6379/1")
@@ -68,6 +69,9 @@ class Settings(BaseSettings):
     RATE_LIMIT_REQUESTS: int = Field(default=100)
     RATE_LIMIT_WINDOW: int = Field(default=60)  # seconds
     
+    # Bot Configuration
+    BOT_TOKEN: str = Field(default="")
+
     # File Uploads
     UPLOADS_DIR: str = Field(default="/app/uploads")  # Directory for uploaded files
     

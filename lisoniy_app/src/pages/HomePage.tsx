@@ -182,12 +182,12 @@ export function HomePage() {
               O'zbek tilining raqamli resurslari, NLP vositalari, lingvistik ma'lumotlar va modellar
             </motion.p>
             <motion.div
-              className="flex flex-wrap items-center justify-center gap-4"
+              className="flex flex-wrap items-center justify-center gap-4 relative z-20"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5 }}
             >
-              <Link to={isAuthenticated ? "/dashboard" : "/auth/login"}>
+              <Link to="/dashboard/learn">
                 <Button size="lg" className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                   <Zap className="h-5 w-5" />
                   Sinab ko'rish
@@ -203,8 +203,8 @@ export function HomePage() {
           </div>
         </div>
         {/* Decorative gradient orbs */}
-        <div className="absolute -top-24 left-0 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
-        <div className="absolute -bottom-24 right-0 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
+        <div className="absolute -top-24 left-0 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 right-0 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl pointer-events-none" />
       </section>
 
       {/* Stats Section */}

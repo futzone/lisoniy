@@ -39,9 +39,11 @@ def send_verification_email(self, email: str, name: str, otp: str) -> dict:
         Task result
     """
     try:
-        email_service = EmailService()
-        message = email_service.create_verification_email(email, name, otp)
-        email_service.send_email(message)
+        html = EmailService.create_verification_html(name, otp)
+        success = EmailService.send_email_sync(email, "Lisoniy - Email Tasdiqlash", html)
+        
+        if not success:
+            raise Exception("Failed to send email")
         
         return {"status": "success", "email": email}
     except Exception as exc:
@@ -68,9 +70,11 @@ def send_password_reset_email(
         Task result
     """
     try:
-        email_service = EmailService()
-        message = email_service.create_password_reset_email(email, name, reset_token)
-        email_service.send_email(message)
+        html = EmailService.create_password_reset_html(name, reset_token)
+        success = EmailService.send_email_sync(email, "Lisoniy - Parolni Tiklash", html)
+        
+        if not success:
+            raise Exception("Failed to send email")
         
         return {"status": "success", "email": email}
     except Exception as exc:
@@ -90,9 +94,11 @@ def send_welcome_email(self, email: str, name: str) -> dict:
         Task result
     """
     try:
-        email_service = EmailService()
-        message = email_service.create_welcome_email(email, name)
-        email_service.send_email(message)
+        html = EmailService.create_welcome_html(name)
+        success = EmailService.send_email_sync(email, "Lisoniy ga Xush Kelibsiz! 🎉", html)
+        
+        if not success:
+            raise Exception("Failed to send email")
         
         return {"status": "success", "email": email}
     except Exception as exc:

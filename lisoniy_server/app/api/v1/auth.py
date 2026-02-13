@@ -71,6 +71,32 @@ async def verify_email(
     return UserResponse.model_validate(user)
 
 
+@router.post("/resend-verification", response_model=Dict[str, Any])
+async def resend_verification(
+    email_data: RequestPasswordResetRequest,  # Reuse the email-only schema
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+) -> Dict[str, Any]:
+    """
+    Resend email verification OTP
+    
+    - **email**: User email
+    
+    Sends new verification code if user exists and is not verified
+    """
+    # Rate limiting
+    client_ip = request.client.host
+    is_allowed = await redis_manager.check_rate_limit(f"resend_verification:{client_ip}")
+    
+    if not is_allowed:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many requests. Please try again later."
+        )
+    
+    return await AuthService.resend_verification_otp(db, email_data.email)
+
+
 @router.post("/login", response_model=TokenResponse)
 async def login(
     login_data: LoginRequest,

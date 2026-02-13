@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
@@ -21,73 +21,16 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
-const leaderboardData = [
-  {
-    rank: 1,
-    name: 'Alisher Navoiy',
-    username: '@alisher_n',
-    avatar: '',
-    points: 12450,
-    contributions: 342,
-    datasets: 28,
-    articles: 45,
-    discussions: 89,
-    badge: 'Oltin',
-    badgeColor: 'from-yellow-500 to-amber-600',
-  },
-  {
-    rank: 2,
-    name: 'Zahiriddin Bobur',
-    username: '@z_bobur',
-    avatar: '',
-    points: 10230,
-    contributions: 298,
-    datasets: 24,
-    articles: 38,
-    discussions: 76,
-    badge: 'Kumush',
-    badgeColor: 'from-slate-400 to-slate-500',
-  },
-  {
-    rank: 3,
-    name: 'Mirzo Ulug\'bek',
-    username: '@ulugbek_m',
-    avatar: '',
-    points: 9876,
-    contributions: 276,
-    datasets: 22,
-    articles: 34,
-    discussions: 68,
-    badge: 'Bronza',
-    badgeColor: 'from-orange-600 to-amber-700',
-  },
-  {
-    rank: 4,
-    name: 'Ahmad Yugnakiy',
-    username: '@ahmad_y',
-    avatar: '',
-    points: 8542,
-    contributions: 245,
-    datasets: 19,
-    articles: 31,
-    discussions: 62,
-    badge: 'Faol',
-    badgeColor: 'from-blue-500 to-cyan-500',
-  },
-  {
-    rank: 5,
-    name: 'Yusuf Xos Hojib',
-    username: '@yusuf_xh',
-    avatar: '',
-    points: 7890,
-    contributions: 223,
-    datasets: 17,
-    articles: 28,
-    discussions: 54,
-    badge: 'Faol',
-    badgeColor: 'from-blue-500 to-cyan-500',
-  },
-];
+interface LeaderboardUser {
+    id: number;
+    full_name: string | null;
+    nickname: string | null;
+    avatar_image: string | null;
+    ball: number;
+    rank: string | null;
+    total_posts: number;
+    total_datasets: number;
+}
 
 const categories = [
   { id: 'all', label: 'Umumiy', icon: Trophy },
@@ -100,12 +43,42 @@ const categories = [
 export function LeaderboardPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [leaders, setLeaders] = useState<LeaderboardUser[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const getRankIcon = (rank: number) => {
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.lisoniy.uz';
+            const res = await fetch(`${apiUrl}/api/v1/leaderboard/`);
+            if (res.ok) {
+                const data = await res.json();
+                setLeaders(data);
+            }
+        } catch (error) {
+            console.error("Leaderboard fetch error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchLeaderboard();
+  }, []);
+
+  const getRankIcon = (index: number) => {
+    const rank = index + 1;
     if (rank === 1) return <Crown className="h-6 w-6 text-yellow-500" />;
     if (rank === 2) return <Medal className="h-6 w-6 text-slate-400" />;
     if (rank === 3) return <Medal className="h-6 w-6 text-orange-600" />;
     return <span className="text-xl font-bold text-muted-foreground">#{rank}</span>;
+  };
+
+  const getBadgeColor = (rank: string | null) => {
+      switch(rank) {
+          case 'Legend': return 'from-yellow-500 to-amber-600';
+          case 'Master': return 'from-slate-400 to-slate-500';
+          case 'Expert': return 'from-orange-600 to-amber-700';
+          default: return 'from-blue-500 to-cyan-500';
+      }
   };
 
   return (
@@ -151,62 +124,62 @@ export function LeaderboardPage() {
 
         {/* Leaderboard */}
         <div className="space-y-3">
-          {leaderboardData.map((leader) => (
-            <Card key={leader.rank} className="hover:shadow-md transition-shadow">
+          {loading ? (
+              <div className="text-center py-10">Yuklanmoqda...</div>
+          ) : leaders.length === 0 ? (
+              <div className="text-center py-10 text-muted-foreground">Hozircha ma'lumot yo'q.</div>
+          ) : leaders.map((leader, idx) => (
+            <Card key={leader.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center gap-6">
                   {/* Rank */}
                   <div className="flex-shrink-0 w-12 flex items-center justify-center">
-                    {getRankIcon(leader.rank)}
+                    {getRankIcon(idx)}
                   </div>
 
                   {/* Avatar and Name */}
                   <div className="flex items-center gap-4 flex-1 min-w-0">
                     <Avatar className="h-12 w-12">
                       <AvatarFallback className="text-lg">
-                        {leader.name.split(' ').map(n => n[0]).join('')}
+                        {(leader.full_name || leader.nickname || "User").split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-lg truncate">{leader.name}</h3>
-                      <p className="text-sm text-muted-foreground">{leader.username}</p>
+                      <h3 className="font-semibold text-lg truncate">{leader.full_name || "Foydalanuvchi"}</h3>
+                      <p className="text-sm text-muted-foreground">@{leader.nickname || `user${leader.id}`}</p>
                     </div>
-                    <Badge className={`bg-gradient-to-r ${leader.badgeColor} text-white border-0`}>
-                      {leader.badge}
+                    <Badge className={`bg-gradient-to-r ${getBadgeColor(leader.rank)} text-white border-0`}>
+                      {leader.rank || "Newbie"}
                     </Badge>
                   </div>
 
                   {/* Stats */}
                   <div className="hidden lg:flex items-center gap-8">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">{leader.points.toLocaleString()}</div>
+                      <div className="text-2xl font-bold text-primary">{leader.ball.toLocaleString()}</div>
                       <div className="text-xs text-muted-foreground">Ball</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-semibold">{leader.datasets}</div>
-                      <div className="text-xs text-muted-foreground">Ma'lumotlar</div>
+                      <div className="text-lg font-semibold">{leader.total_datasets}</div>
+                      <div className="text-xs text-muted-foreground">Datasetlar</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-semibold">{leader.articles}</div>
-                      <div className="text-xs text-muted-foreground">Maqolalar</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-semibold">{leader.discussions}</div>
-                      <div className="text-xs text-muted-foreground">Muhokama</div>
+                      <div className="text-lg font-semibold">{leader.total_posts}</div>
+                      <div className="text-xs text-muted-foreground">Postlar</div>
                     </div>
                   </div>
 
                   {/* Mobile Stats */}
                   <div className="flex lg:hidden items-center">
                     <div className="text-center">
-                      <div className="text-xl font-bold text-primary">{leader.points.toLocaleString()}</div>
+                      <div className="text-xl font-bold text-primary">{leader.ball.toLocaleString()}</div>
                       <div className="text-xs text-muted-foreground">Ball</div>
                     </div>
                   </div>
 
                   {/* View Profile */}
                   <Button variant="ghost" size="sm" asChild>
-                    <Link to={`/dashboard/profile?user=${leader.username}`}>
+                    <Link to={`/dashboard/profile?user=${leader.nickname || leader.id}`}>
                       <ChevronRight className="h-4 w-4" />
                     </Link>
                   </Button>

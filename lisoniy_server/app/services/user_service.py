@@ -532,9 +532,10 @@ class UserService:
         
         return {
             "bio": meta.bio,
-            "telegram": meta.telegram_url,
-            "github": meta.github_url,
-            "website": meta.website_url,
+            "nickname": meta.nickname,
+            "telegram_url": meta.telegram_url,
+            "github_url": meta.github_url,
+            "website_url": meta.website_url,
             "education": meta.education,
             "address": meta.address,
             "username": meta.nickname or (meta.user.email.split('@')[0] if meta.user.email else "user"),

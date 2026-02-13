@@ -25,3 +25,6 @@ lisoniy_server/.env
 lisoniy_server/db.sqlite3
 lisoniy_server/.pytest_cache/
 lisoniy_server/instance/
+lisoniy_server/credentials.json
+lisoniy_server/token.json
+lisoniy_server/uploads/

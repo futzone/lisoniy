@@ -13,9 +13,9 @@ export interface UserRankingResponse {
 
 export interface UserMetaResponse {
     bio: string | null;
-    telegram: string | null;
-    github: string | null;
-    website: string | null;
+    telegram_url: string | null;
+    github_url: string | null;
+    website_url: string | null;
     education: string | null;
     address: string | null;
     nickname: string | null; // Base model has nickname

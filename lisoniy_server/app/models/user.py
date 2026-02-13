@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from .post import Post  # noqa
     from .comment import Comment  # noqa
     from .user_meta import UserMeta # noqa
+    from .dataset import Dataset # noqa
 
 
 class UserRole(str, PyEnum):
@@ -59,6 +60,7 @@ class User(Base, TimestampMixin):
     )
     posts: Mapped[list["Post"]] = relationship("Post", back_populates="owner", cascade="all, delete-orphan", lazy="noload")
     comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="owner", cascade="all, delete-orphan", lazy="noload")
+    datasets: Mapped[list["Dataset"]] = relationship("Dataset", back_populates="creator", cascade="all, delete-orphan", lazy="noload")
     meta: Mapped["UserMeta"] = relationship("UserMeta", back_populates="user", uselist=False, cascade="all, delete-orphan", lazy="selectin")
     
     def __repr__(self) -> str:

@@ -104,6 +104,47 @@ class AuthService:
         return user
     
     @staticmethod
+    async def resend_verification_otp(db: AsyncSession, email: str) -> Dict[str, Any]:
+        """
+        Resend verification OTP to user
+        
+        Args:
+            db: Database session
+            email: User email
+            
+        Returns:
+            Success message
+            
+        Raises:
+            HTTPException: If user not found or already verified
+        """
+        # Get user
+        user = await UserService.get_user_by_email(db, email)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        if user.is_verified:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email is already verified"
+            )
+        
+        # Generate and store new OTP
+        otp = await redis_manager.generate_otp(user.email)
+        
+        # Send verification email (via Celery task)
+        from app.tasks.email_tasks import send_verification_email
+        send_verification_email.delay(user.email, user.full_name or "User", otp)
+        
+        return {
+            "message": "Verification code sent successfully. Please check your email.",
+            "otp": otp if settings.DEBUG else None,  # Only return OTP in debug mode
+        }
+    
+    @staticmethod
     async def login(db: AsyncSession, login_data: LoginRequest) -> TokenResponse:
         """
         Authenticate user and return tokens

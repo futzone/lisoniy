@@ -15,7 +15,11 @@ import os
 from app.core.config import settings
 from app.api.v1 import api_router
 from app.services.redis_manager import redis_manager
-
+from fastapi.responses import Response
+from sqlalchemy import select
+from app.db.session import AsyncSessionLocal
+from app.models.post import Post
+from app.models.dataset import Dataset
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -171,6 +175,46 @@ async def general_exception_handler(
             "error": str(exc) if settings.DEBUG else "Internal server error",
         },
     )
+
+
+@app.get("/sitemap.xml", tags=["SEO"])
+async def sitemap_xml():
+    """Generate dynamic sitemap.xml"""
+    base_url = "https://lisoniy.uz"
+    
+    # Static pages
+    urls = [
+        f"{base_url}/",
+        f"{base_url}/datasets",
+        f"{base_url}/posts",
+        f"{base_url}/terminology",
+        f"{base_url}/login",
+        f"{base_url}/register",
+    ]
+    
+    async with AsyncSessionLocal() as session:
+        # Fetch posts
+        result = await session.execute(select(Post.id, Post.updated_at))
+        posts = result.all()
+        for p in posts:
+            urls.append(f"{base_url}/posts/{p.id}")
+            
+        # Fetch datasets
+        result = await session.execute(select(Dataset.id, Dataset.updated_at))
+        datasets = result.all()
+        for d in datasets:
+            urls.append(f"{base_url}/datasets/{d.id}")
+
+    # Build XML
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    
+    for url in urls:
+        xml_content += f'  <url>\n    <loc>{url}</loc>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>\n'
+        
+    xml_content += '</urlset>'
+    
+    return Response(content=xml_content, media_type="application/xml")
 
 
 if __name__ == "__main__":

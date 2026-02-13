@@ -5,6 +5,7 @@ from app.models.terminology import Category, Term, Definition, TermAuditLog, Aud
 from app.models.post import Post, PostType
 from app.models.comment import Comment
 from app.models.dataset import Dataset, DataEntry
+from app.models.dataset_meta import DatasetMeta, DatasetStar, DatasetContributor
 from app.models.user_meta import UserMeta
 
 __all__ = [

@@ -1,0 +1,41 @@
+# Lisoniy.uz Robots.txt
+# https://lisoniy.uz
+
+User-agent: *
+Allow: /
+Allow: /dashboard/learn
+Allow: /dashboard/explore-datasets
+Allow: /tools/
+Allow: /hamjamiyat
+Allow: /docs/
+
+# Disallow auth pages
+Disallow: /auth/
+Disallow: /dashboard/settings
+Disallow: /dashboard/profile
+Disallow: /dashboard/contributions
+Disallow: /dashboard/create-dataset
+Disallow: /dashboard/dataset/*/edit
+Disallow: /dashboard/dataset/*/add
+
+# Crawl delay for politeness
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://lisoniy.uz/sitemap.xml
+
+# Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Yandex
+User-agent: Yandex
+Allow: /
+Crawl-delay: 1
+Host: lisoniy.uz
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1

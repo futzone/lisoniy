@@ -68,8 +68,10 @@ class Dataset(Base):
     creator: Mapped[Optional["User"]] = relationship(
         "User",
         foreign_keys=[creator_id],
+        back_populates="datasets",
         lazy="noload"
     )
+    # Use string for forward reference to avoid import issues
     meta: Mapped[Optional["DatasetMeta"]] = relationship(
         "DatasetMeta",
         back_populates="dataset",

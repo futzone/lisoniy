@@ -6,6 +6,7 @@ export interface User {
   email: string;
   fullName: string;
   phone: string;
+  isVerified: boolean;
 }
 
 interface AuthState {
@@ -15,6 +16,7 @@ interface AuthState {
   isAuthenticated: boolean;
   login: (user: User, accessToken: string, refreshToken: string) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
+  setUserVerified: () => void;
   logout: () => void;
 }
 
@@ -34,6 +36,10 @@ export const useAuthStore = create<AuthState>()(
         }),
       setTokens: (accessToken, refreshToken) =>
         set({ accessToken, refreshToken }),
+      setUserVerified: () =>
+        set((state) => ({
+          user: state.user ? { ...state.user, isVerified: true } : null
+        })),
       logout: () =>
         set({
           user: null,

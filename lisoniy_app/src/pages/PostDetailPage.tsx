@@ -14,8 +14,11 @@ import {
     User,
     Share2,
     Loader2,
-    Send
+    Send,
+    Check,
+    Copy
 } from "lucide-react";
+import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import { motion } from "motion/react";
 import { SEO } from "@/app/components/SEO";
@@ -109,6 +112,28 @@ export function PostDetailPage() {
     };
 
     const [replyTo, setReplyTo] = useState<Comment | null>(null);
+    const [copied, setCopied] = useState(false);
+
+    const handleShare = async () => {
+        const url = window.location.href;
+        try {
+            await navigator.clipboard.writeText(url);
+            setCopied(true);
+            toast.success("Havola nusxalandi!");
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            setCopied(true);
+            toast.success("Havola nusxalandi!");
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
 
     const handleCommentSubmit = async () => {
         if (!post || !user || !commentBody.trim()) return;
@@ -290,9 +315,9 @@ export function PostDetailPage() {
                                                 <span className="font-medium">{post.total_comments || post.comments_count || 0} izoh</span>
                                             </button>
                                         </div>
-                                        <Button variant="outline" size="sm" className="gap-2">
-                                            <Share2 className="h-4 w-4" />
-                                            Ulashish
+                                        <Button variant="outline" size="sm" className="gap-2" onClick={handleShare}>
+                                            {copied ? <Check className="h-4 w-4 text-green-500" /> : <Share2 className="h-4 w-4" />}
+                                            {copied ? "Nusxalandi!" : "Ulashish"}
                                         </Button>
                                     </div>
                                 </div>

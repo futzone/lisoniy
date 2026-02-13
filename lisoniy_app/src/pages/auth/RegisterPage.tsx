@@ -72,7 +72,7 @@ export function RegisterPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative w-full max-w-md"
+        className="relative w-full max-w-md z-10"
       >
         <Link to="/">
           <Button variant="ghost" size="sm" className="mb-4">
@@ -203,8 +203,8 @@ export function RegisterPage() {
       </motion.div>
 
       {/* Decorative orbs */}
-      <div className="absolute -top-24 left-0 h-96 w-96 rounded-full bg-green-500/20 blur-3xl" />
-      <div className="absolute -bottom-24 right-0 h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl" />
+      <div className="absolute -top-24 left-0 h-96 w-96 rounded-full bg-green-500/20 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 right-0 h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
     </div>
   );
 }
